@@ -6,3 +6,10 @@ from .dotprod import (
     SelfAttention
 )
 
+from .encoding import (
+    make_frequencies,
+    encode_position,
+    make_encoding,
+    SinusoidalEncoding
+)
+
