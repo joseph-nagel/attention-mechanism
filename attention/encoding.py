@@ -3,7 +3,7 @@ Positional encoding.
 
 Summary
 -------
-This module implements the sinusoidal embedding from https://arxiv.org/abs/1706.03762.
+This module implements the sinusoidal embedding from the original transformer architecture.
 It can be used in order to encode spatial positions or times and ingest them in further layers.
 For a (batch_size, 1)-shaped input, the (batch_size, embed_dim)-sized embedding is computed.
 

@@ -3,7 +3,7 @@ Dot-product attention.
 
 Summary
 -------
-The dot-product attention from https://arxiv.org/abs/1706.03762 is implemented.
+The classical (scaled) dot-product attention variant is implemented.
 A self-attention mechanism relates items at different positions of a sequence.
 In comparison to recurrent architectures, it is parallelizable, does not severely suffer from
 from vanishing/exploding gradients and allows for better capturing longe-range dependencies.
@@ -51,7 +51,26 @@ def self_attend(X, W_q, W_k, W_v, scale=True):
 
 
 class SelfAttention(nn.Module):
-    '''Dot-product self-attention for sequential data.'''
+    '''
+    Dot-product self-attention for sequential data.
+
+    Summary
+    -------
+    The layer realizes the classical dot-product self-attention.
+    It operates on (batch, sequence, features)-shaped input tensors.
+
+    Parameters
+    ----------
+    d_x : int
+        Number of input features.
+    d_k : int
+        Number of queries and keys.
+    d_v : int
+        Number of values.
+    scale : bool
+        Determines whether scores are scaled.
+
+    '''
 
     def __init__(self,
                  d_x,
@@ -100,9 +119,18 @@ class SelfAttention2D(nn.Module):
 
     Summary
     -------
-    The self-attention from https://arxiv.org/abs/1805.08318 is implemented.
-    It is variant of the classical (scaled) dot-product attention,
-    which is here applied within a residual skip connection.
+    This module establishes the self-attention from https://arxiv.org/abs/1805.08318.
+    It employs a residual skip connection adding the inputs after the attention.
+    The input shape for this layer is (batch, channels, height, width).
+
+    Parameters
+    ----------
+    in_channels : int
+        Number of input and output channels.
+    out_channels : int
+        Number of queries and keys.
+    scale : bool
+        Determines whether scores are scaled.
 
     '''
 
