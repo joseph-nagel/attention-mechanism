@@ -1,6 +1,6 @@
 # Attention mechanism
 
-![Sinusoidal encoding of spatial positions or times](assets/sinusoidal.svg)
+![Sinusoidal encoding of spatial positions or times](assets/sinusoidal.svg "Sinusoidal encoding")
 
 A short introduction to attention in deep neural networks is provided.
 [The notebook](notebooks/intro.ipynb) discusses the most important components of the transformer architecture.
