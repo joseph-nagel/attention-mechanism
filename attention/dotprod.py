@@ -77,6 +77,7 @@ class SelfAttention(nn.Module):
                  d_k=None,
                  d_v=None,
                  scale=True):
+
         super().__init__()
 
         if d_k is None:
@@ -138,6 +139,7 @@ class SelfAttention2D(nn.Module):
                  in_channels,
                  out_channels=None,
                  scale=False):
+
         super().__init__()
 
         if out_channels is None:
@@ -181,5 +183,6 @@ class SelfAttention2D(nn.Module):
 
         # reshape
         out = out.view(b, c, h, w) # (b, c, h, w)
+
         return out
 

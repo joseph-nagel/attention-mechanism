@@ -8,8 +8,8 @@ This involves the dot-product attention and the sinusoidal position encoding.
 
 Modules
 -------
-encoding : Positional encoding.
 dotprod : Dot-product attention.
+encoding : Positional encoding.
 
 '''
 
