@@ -114,6 +114,70 @@ class SelfAttention(nn.Module):
         return attn
 
 
+class MultiheadSelfAttention(nn.Module):
+    '''
+    Multihead self-attention.
+
+    Summary
+    -------
+    A multihead version of self-attention is implemented.
+    It simply uses the self-attention layer from above
+    in order to represent multiple attention heads.
+    The outputs are concatenated and linearly transformed.
+
+    Parameters
+    ----------
+    in_features : int
+        Number of input features.
+    out_features : int
+        Number of output features.
+    num_heads : int
+        Number of attention heads.
+    scale : bool
+        Determines whether scores are scaled.
+
+    '''
+
+    def __init__(self,
+                 in_features,
+                 out_features,
+                 num_heads,
+                 scale=True):
+
+        super().__init__()
+
+        # create attention heads
+        heads = [
+            SelfAttention(
+                d_x=in_features,
+                d_k=in_features,
+                d_v=in_features,
+                scale=scale
+            ) for _ in range(num_heads)
+        ]
+
+        self.heads = nn.ModuleList(heads)
+
+        # create linear layer
+        self.linear = nn.Linear(num_heads * in_features, out_features)
+
+    def forward(self, x):
+
+        # ensure (batch, sequence, features)-shaped input
+        if x.ndim == 2:
+            x = x.unsqueeze(0)
+        elif x.ndim != 3:
+            raise ValueError('Invalid number of tensor dimensions: {}'.format(x.ndim))
+
+        # run attention heads
+        x = torch.cat([h(x) for h in self.heads], dim=-1)
+
+        # transform linearly
+        x = self.linear(x)
+
+        return x
+
+
 class SelfAttention2D(nn.Module):
     '''
     Self-attention with skip connections for 2D data.

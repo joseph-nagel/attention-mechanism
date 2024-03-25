@@ -25,6 +25,7 @@ from .dotprod import (
     attend,
     self_attend,
     SelfAttention,
+    MultiheadSelfAttention,
     SelfAttention2D
 )
 
