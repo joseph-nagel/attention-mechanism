@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["atttools"]
+
+[project]
+name = "atttools"
+version = "0.0.1"
+description = "Attention tools"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Joseph Nagel", email = "JosephBNagel@gmail.com"}
+]
+keywords = ["attention", "transformer", "vision transformer"]
+dependencies = [
+    "numpy",
+    "torch"
+]
+
+[project.optional-dependencies]
+interactive = [
+    "matplotlib",
+    "notebook"
+]
+
+[project.urls]
+source = "https://github.com/joseph-nagel/attention-mechanism"
+
