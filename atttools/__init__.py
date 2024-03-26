@@ -36,5 +36,10 @@ from .encoding import (
     SinusoidalEncoding
 )
 
-from .vit import PatchEmbedding
+from .vit import (
+    EncoderBlock,
+    Encoder,
+    PatchEmbedding,
+    ViT
+)
 

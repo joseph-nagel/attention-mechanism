@@ -20,7 +20,7 @@ class PatchEmbedding(nn.Module):
     ----------
     in_features : int
         Number of input features.
-    out_features : int
+    embed_dim : int
         Number of output features.
     patch_size : int
         Size of the patches.
@@ -35,7 +35,7 @@ class PatchEmbedding(nn.Module):
 
     def __init__(self,
                  in_channels,
-                 out_features,
+                 embed_dim,
                  patch_size,
                  use_cls_token=False,
                  use_pos_embedding=False,
@@ -44,13 +44,13 @@ class PatchEmbedding(nn.Module):
         super().__init__()
 
         self.in_channels = in_channels
-        self.out_features = out_features
+        self.out_features = embed_dim
         self.patch_size = patch_size
 
         # create patch embedding as conv layer
         self.conv = nn.Conv2d(
             in_channels=in_channels,
-            out_channels=out_features,
+            out_channels=embed_dim,
             kernel_size=patch_size,
             stride=patch_size,
             padding=0
@@ -59,7 +59,7 @@ class PatchEmbedding(nn.Module):
         # create learnable class token embedding
         if use_cls_token:
             self.cls_token = nn.Parameter(
-                torch.randn(1, 1, out_features), # (1, 1, c)
+                torch.randn(1, 1, embed_dim), # (1, 1, c)
                 requires_grad=True
             )
         else:
@@ -69,7 +69,7 @@ class PatchEmbedding(nn.Module):
         if use_pos_embedding:
             if num_patches is not None:
                 self.pos_embedding = nn.Parameter(
-                    torch.randn(1, num_patches + 1 if use_cls_token else num_patches, out_features), # (b, p(+1), c)
+                    torch.randn(1, num_patches + 1 if use_cls_token else num_patches, embed_dim), # (b, p(+1), c)
                     requires_grad=True
                 )
             else:

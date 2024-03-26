@@ -127,31 +127,34 @@ class MultiheadSelfAttention(nn.Module):
 
     Parameters
     ----------
-    in_features : int
-        Number of input features.
-    out_features : int
-        Number of output features.
+    embed_dim : int
+        Number of input/output features.
     num_heads : int
         Number of attention heads.
-    scale : bool
+    scale : bool, optional
         Determines whether scores are scaled.
 
     '''
 
     def __init__(self,
-                 in_features,
-                 out_features,
+                 embed_dim,
                  num_heads,
                  scale=True):
 
         super().__init__()
 
+        # consider dimensionality
+        if embed_dim % num_heads == 0:
+            head_dim = embed_dim // num_heads
+        else:
+            raise ValueError('Embedding dim. must be divisible by head number ')
+
         # create attention heads
         heads = [
             SelfAttention(
-                d_x=in_features,
-                d_k=in_features,
-                d_v=in_features,
+                d_x=embed_dim, # input dim. d_x
+                d_k=head_dim, # intermediate dims. with d_q = d_k
+                d_v=head_dim, # output dim. d_v
                 scale=scale
             ) for _ in range(num_heads)
         ]
@@ -159,7 +162,7 @@ class MultiheadSelfAttention(nn.Module):
         self.heads = nn.ModuleList(heads)
 
         # create linear layer
-        self.linear = nn.Linear(num_heads * in_features, out_features)
+        # self.linear = nn.Linear(embed_dim, embed_dim, bias=True)
 
     def forward(self, x):
 
@@ -172,8 +175,8 @@ class MultiheadSelfAttention(nn.Module):
         # run attention heads
         x = torch.cat([h(x) for h in self.heads], dim=-1)
 
-        # transform linearly
-        x = self.linear(x)
+        # run linear layer
+        # x = self.linear(x)
 
         return x
 
