@@ -1,4 +1,4 @@
-'''Vision transformer.'''
+'''Patch embedding.'''
 
 import torch
 import torch.nn as nn
@@ -6,19 +6,36 @@ import torch.nn as nn
 
 class PatchEmbedding(nn.Module):
     '''
-    Patchifier module.
+    Patch embedding module.
 
     Summary
     -------
     Input images are organized into patches, flattened,
     and linearly transformed into an embedding space.
     This is realized through an appropriate conv. layer.
+    An optional learnable position embedding may be used.
+    A learnable class token can be included similarly.
+
+    Parameters
+    ----------
+    in_features : int
+        Number of input features.
+    out_features : int
+        Number of output features.
+    patch_size : int
+        Size of the patches.
+    use_cls_token : bool, optional
+        Determines whether a BERT-like class token is utilized.
+    use_pos_embedding : bool, optional
+        Determines whether an additional pos. embedding is learned.
+    num_patches : int, optional
+        Prefixed number of patches, required for pos. embedding.
 
     '''
 
     def __init__(self,
                  in_channels,
-                 embed_dim,
+                 out_features,
                  patch_size,
                  use_cls_token=False,
                  use_pos_embedding=False,
@@ -27,22 +44,22 @@ class PatchEmbedding(nn.Module):
         super().__init__()
 
         self.in_channels = in_channels
-        self.embed_dim = embed_dim
+        self.out_features = out_features
         self.patch_size = patch_size
 
         # create patch embedding as conv layer
         self.conv = nn.Conv2d(
             in_channels=in_channels,
-            out_channels=embed_dim,
+            out_channels=out_features,
             kernel_size=patch_size,
             stride=patch_size,
             padding=0
         )
 
-        # create class token embedding
+        # create learnable class token embedding
         if use_cls_token:
             self.cls_token = nn.Parameter(
-                torch.randn(1, 1, embed_dim), # (1, 1, c)
+                torch.randn(1, 1, out_features), # (1, 1, c)
                 requires_grad=True
             )
         else:
@@ -52,11 +69,11 @@ class PatchEmbedding(nn.Module):
         if use_pos_embedding:
             if num_patches is not None:
                 self.pos_embedding = nn.Parameter(
-                    torch.randn(1, num_patches + 1 if use_cls_token else num_patches, embed_dim), # (b, h'*w' + 1, c)
+                    torch.randn(1, num_patches + 1 if use_cls_token else num_patches, out_features), # (b, p(+1), c)
                     requires_grad=True
                 )
             else:
-                raise TypeError('Number of patches has to be passed')
+                raise TypeError('Number of patches is missing')
         else:
             self.pos_embedding = None
 

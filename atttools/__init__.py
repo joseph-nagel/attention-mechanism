@@ -1,27 +1,27 @@
 '''
-Attention mechanisms.
+Attention tools.
 
 Summary
 -------
 Some components of the transformer in https://arxiv.org/abs/1706.03762 are implemented.
 This involves the dot-product attention and the sinusoidal position encoding.
-Moreover, am implementation of the vision transformer (ViT) originally
+An implementation of the vision transformer (ViT) that has been originally
 proposed in the paper https://arxiv.org/abs/2010.11929 is provided.
 
 Modules
 -------
-dotprod : Dot-product attention.
+attention : Dot-product attention.
 encoding : Positional encoding.
 vit : Vision transformer.
 
 '''
 
-from . import dotprod
+from . import attention
 from . import encoding
 from . import vit
 
 
-from .dotprod import (
+from .attention import (
     attend,
     self_attend,
     SelfAttention,
