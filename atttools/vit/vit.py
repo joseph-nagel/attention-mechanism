@@ -18,6 +18,7 @@ class ViT(nn.Module):
                  num_blocks,
                  mlp_dim=None,
                  mlp_dropout=0.0,
+                 use_custom_mha=False,
                  use_cls_token=True):
 
         super().__init__()
@@ -38,7 +39,8 @@ class ViT(nn.Module):
             num_heads=num_heads,
             num_blocks=num_blocks,
             mlp_dim=mlp_dim,
-            mlp_dropout=mlp_dropout
+            mlp_dropout=mlp_dropout,
+            use_custom_mha=use_custom_mha
         )
 
     def forward(self, x):
