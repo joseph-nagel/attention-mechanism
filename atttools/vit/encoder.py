@@ -54,18 +54,18 @@ class EncoderBlock(nn.Module):
     def forward(self, x):
 
         # run attention block
-        x = self.ln1(x)
+        y = self.ln1(x)
 
         if self.use_custom_mha:
-            x = x + self.att(x)
+            y = x + self.att(y)
         else:
-            x = x + self.att(x, x, x, need_weights=False)[0]
+            y = x + self.att(y, y, y, need_weights=False)[0]
 
         # run MLP block
-        x = self.ln2(x)
-        x = x + self.mlp(x)
+        z = self.ln2(y)
+        z = y + self.mlp(z)
 
-        return x
+        return z
 
 
 class Encoder(nn.Sequential):
