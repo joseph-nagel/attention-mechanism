@@ -79,19 +79,19 @@ class BaseViT(LightningModule):
     def training_step(self, batch, batch_idx):
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
-        self.log('train_loss', loss.item()) # Lightning logs batch-wise metrics during training per default
+        self.log('train_loss', loss.item()) # Lightning logs batch-wise scalars during training per default
         return loss
 
     def validation_step(self, batch, batch_idx):
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
-        self.log('val_loss', loss.item()) # Lightning automatically averages metrics over batches for validation
+        self.log('val_loss', loss.item()) # Lightning automatically averages scalars over batches for validation
         return loss
 
     def test_step(self, batch, batch_idx):
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
-        self.log('test_loss', loss.item()) # Lightning automatically averages metrics over batches for testing
+        self.log('test_loss', loss.item()) # Lightning automatically averages scalars over batches for testing
         return loss
 
     # TODO: enable LR scheduling

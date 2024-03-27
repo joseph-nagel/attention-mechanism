@@ -116,37 +116,41 @@ class ClassifierViT(BaseViT):
         # store hyperparams
         self.save_hyperparameters(logger=True)
 
-        # create accuracy method
-        self.getacc = Accuracy(
-            task='multiclass',
-            num_classes=num_classes
-        )
-
-    def loss_and_acc(self, x, y):
-        '''Compute loss and accuracy.'''
-        y_pred = self(x)
-        loss = self.lossfcn(y_pred, y)
-        acc = self.getacc(y_pred, y)
-        return loss, acc
+        # create accuracy metrics
+        self.train_acc = Accuracy(task='multiclass', num_classes=num_classes)
+        self.val_acc = Accuracy(task='multiclass', num_classes=num_classes)
+        self.test_acc = Accuracy(task='multiclass', num_classes=num_classes)
 
     def training_step(self, batch, batch_idx):
         x_batch, y_batch = self._get_batch(batch)
-        loss, acc = self.loss_and_acc(x_batch, y_batch)
-        self.log('train_loss', loss.item()) # Lightning logs batch-wise metrics during training per default
-        self.log('train_acc', acc.item())
+
+        y_pred = self(x_batch)
+        loss = self.lossfcn(y_pred, y_batch)
+        _ = self.train_acc(y_pred, y_batch)
+
+        self.log('train_loss', loss.item()) # Lightning logs batch-wise scalars during training per default
+        self.log('train_acc', self.train_acc) # the same applies to torchmetrics.Metric objects
         return loss
 
     def validation_step(self, batch, batch_idx):
         x_batch, y_batch = self._get_batch(batch)
-        loss, acc = self.loss_and_acc(x_batch, y_batch)
-        self.log('val_loss', loss.item()) # Lightning automatically averages metrics over batches for validation
-        self.log('val_acc', acc.item())
+
+        y_pred = self(x_batch)
+        loss = self.lossfcn(y_pred, y_batch)
+        _ = self.val_acc(y_pred, y_batch)
+
+        self.log('val_loss', loss.item()) # Lightning automatically averages scalars over batches for validation
+        self.log('val_acc', self.val_acc) # the batch size is considered for torchmetrics.Metric objects
         return loss
 
     def test_step(self, batch, batch_idx):
         x_batch, y_batch = self._get_batch(batch)
-        loss, acc = self.loss_and_acc(x_batch, y_batch)
-        self.log('test_loss', loss.item()) # Lightning automatically averages metrics over batches for testing
-        self.log('test_acc', acc.item())
+
+        y_pred = self(x_batch)
+        loss = self.lossfcn(y_pred, y_batch)
+        _ = self.test_acc(y_pred, y_batch)
+
+        self.log('test_loss', loss.item()) # Lightning automatically averages scalars over batches for testing
+        self.log('test_acc', self.test_acc) # the batch size is considered for torchmetrics.Metric objects
         return loss
 
