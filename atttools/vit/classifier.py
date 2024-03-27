@@ -1,6 +1,7 @@
 '''ViT classifier.'''
 
 import torch.nn as nn
+from torchmetrics.classification import Accuracy
 
 from .base import BaseViT
 from .encoder import Encoder
@@ -40,7 +41,7 @@ class ClassifierViT(BaseViT):
     Parameters
     ----------
     in_channels : int
-        Number of input channels
+        Number of input channels.
     embed_dim : int
         Number of embedding features.
     num_classes : int
@@ -114,4 +115,38 @@ class ClassifierViT(BaseViT):
 
         # store hyperparams
         self.save_hyperparameters(logger=True)
+
+        # create accuracy method
+        self.getacc = Accuracy(
+            task='multiclass',
+            num_classes=num_classes
+        )
+
+    def loss_and_acc(self, x, y):
+        '''Compute loss and accuracy.'''
+        y_pred = self(x)
+        loss = self.lossfcn(y_pred, y)
+        acc = self.getacc(y_pred, y)
+        return loss, acc
+
+    def training_step(self, batch, batch_idx):
+        x_batch, y_batch = self._get_batch(batch)
+        loss, acc = self.loss_and_acc(x_batch, y_batch)
+        self.log('train_loss', loss.item()) # Lightning logs batch-wise metrics during training per default
+        self.log('train_acc', acc.item())
+        return loss
+
+    def validation_step(self, batch, batch_idx):
+        x_batch, y_batch = self._get_batch(batch)
+        loss, acc = self.loss_and_acc(x_batch, y_batch)
+        self.log('val_loss', loss.item()) # Lightning automatically averages metrics over batches for validation
+        self.log('val_acc', acc.item())
+        return loss
+
+    def test_step(self, batch, batch_idx):
+        x_batch, y_batch = self._get_batch(batch)
+        loss, acc = self.loss_and_acc(x_batch, y_batch)
+        self.log('test_loss', loss.item()) # Lightning automatically averages metrics over batches for testing
+        self.log('test_acc', acc.item())
+        return loss
 
