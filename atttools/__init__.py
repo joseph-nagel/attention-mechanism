@@ -11,12 +11,14 @@ proposed in the paper https://arxiv.org/abs/2010.11929 is provided.
 Modules
 -------
 attention : Dot-product attention.
+data : Datamodules.
 encoding : Positional encoding.
 vit : Vision transformer.
 
 '''
 
 from . import attention
+from . import data
 from . import encoding
 from . import vit
 
@@ -29,6 +31,8 @@ from .attention import (
     SelfAttention2D
 )
 
+from .data import FashionMNISTDataModule
+
 from .encoding import (
     make_frequencies,
     encode_position,
@@ -37,9 +41,11 @@ from .encoding import (
 )
 
 from .vit import (
+    ClassifierHead,
     EncoderBlock,
     Encoder,
     PatchEmbedding,
-    ViT
+    BaseViT,
+    ClassifierViT
 )
 

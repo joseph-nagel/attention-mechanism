@@ -1,0 +1,51 @@
+seed_everything: null
+
+ckpt_path: null
+
+data:
+  class_path: "atttools.FashionMNISTDataModule"
+  init_args:
+    data_dir: "run/data"
+    mean: null
+    std: null
+    batch_size: 32
+    num_workers: 0
+
+model:
+  class_path: "atttools.ClassifierViT"
+  init_args:
+    in_channels: 1
+    embed_dim: 128
+    num_classes: 10
+    num_heads: 4
+    num_blocks: 2
+    num_patches: 16
+    patch_size: 7
+    mlp_dim: null
+    mlp_dropout: 0.0
+    lr: 0.0003
+
+trainer:
+  accelerator: "cpu"
+  max_epochs: 20
+  log_every_n_steps: 100
+  logger:
+    class_path: "lightning.pytorch.loggers.TensorBoardLogger"
+    init_args:
+      save_dir: "run/"
+      name: "fmnist"
+      version: null
+  callbacks:
+    - class_path: "lightning.pytorch.callbacks.ModelCheckpoint"
+      init_args:
+        filename: "best"
+        monitor: "val_loss"
+        mode: "min"
+        save_top_k: 1
+    - class_path: "lightning.pytorch.callbacks.ModelCheckpoint"
+      init_args:
+        filename: "{epoch}"
+        save_top_k: -1
+        every_n_epochs: 1
+        save_last: true
+

@@ -18,7 +18,9 @@ authors = [
 keywords = ["attention", "transformer", "vision transformer"]
 dependencies = [
     "numpy",
-    "torch"
+    "torch",
+    "torchvision",
+    "lightning"
 ]
 
 [project.optional-dependencies]
