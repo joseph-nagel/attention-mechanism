@@ -6,7 +6,24 @@ from ..attention import MultiheadSelfAttention
 
 
 class EncoderBlock(nn.Module):
-    '''ViT encoder block.'''
+    '''
+    ViT encoder block.
+
+    Parameters
+    ----------
+    embed_dim : int
+        Number of embedding features.
+    num_heads : int
+        Number of attention heads.
+    mlp_dim : int, optional
+        MLP hidden dimensionality.
+    mlp_dropout : float, optional
+        MLP dropout rate.
+    use_custom_mha : bool, optional
+        Determines whether a custom or a native Pytorch
+        implementation of multihead attention is used.
+
+    '''
 
     def __init__(self,
                  embed_dim,
@@ -69,7 +86,26 @@ class EncoderBlock(nn.Module):
 
 
 class Encoder(nn.Sequential):
-    '''ViT encoder.'''
+    '''
+    ViT encoder.
+
+    Parameters
+    ----------
+    embed_dim : int
+        Number of embedding features.
+    num_heads : int
+        Number of attention heads.
+    num_blocks : int
+        Number of encoder blocks.
+    mlp_dim : int, optional
+        MLP hidden dimensionality.
+    mlp_dropout : float, optional
+        MLP dropout rate.
+    use_custom_mha : bool, optional
+        Determines whether a custom or a native Pytorch
+        implementation of multihead attention is used.
+
+    '''
 
     def __init__(self,
                  embed_dim,

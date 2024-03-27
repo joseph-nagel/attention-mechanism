@@ -10,7 +10,23 @@ from .patches import PatchEmbedding
 
 
 class BaseViT(LightningModule):
-    '''Base ViT module.'''
+    '''
+    Base ViT module.
+
+    Parameters
+    ----------
+    patchemb : PyTorch module
+        Patch embedding.
+    encoder : PyTorch module
+        ViT encoder.
+    head : PyTorch module
+        Prediction head.
+    lossfcn : PyTorch module or callable
+        Loss function.
+    lr : float, optional
+        Initial optimizer learning rate.
+
+    '''
 
     def __init__(self,
                  patchemb,
@@ -90,7 +106,33 @@ class BaseViT(LightningModule):
 
 
 class ClassifierViT(BaseViT):
-    '''Classifier ViT module.'''
+    '''
+    Classifier ViT module.
+
+    Parameters
+    ----------
+    in_channels : int
+        Number of input channels
+    embed_dim : int
+        Number of embedding features.
+    num_classes : int
+        Number of target classes.
+    num_heads : int
+        Number of attention heads.
+    num_blocks : int
+        Number of encoder blocks.
+    num_patches : int, optional
+        Prefixed number of patches, required for pos. embedding.
+    patch_size : int
+        Size of the patches.
+    mlp_dim : int, optional
+        MLP hidden dimensionality.
+    mlp_dropout : float, optional
+        MLP dropout rate.
+    lr : float, optional
+        Initial optimizer learning rate.
+
+    '''
 
     def __init__(self,
                  in_channels,

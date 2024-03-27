@@ -4,6 +4,7 @@ Vision transformer.
 Summary
 -------
 The vision transformer (ViT) is implemented from scratch.
+For the moment, classification problems are considered.
 
 Modules
 -------

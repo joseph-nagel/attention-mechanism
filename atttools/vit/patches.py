@@ -18,10 +18,10 @@ class PatchEmbedding(nn.Module):
 
     Parameters
     ----------
-    in_features : int
-        Number of input features.
+    in_channels : int
+        Number of input channels.
     embed_dim : int
-        Number of output features.
+        Number of embedding features.
     patch_size : int
         Size of the patches.
     use_cls_token : bool, optional
