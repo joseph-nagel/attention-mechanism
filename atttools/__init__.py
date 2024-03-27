@@ -41,11 +41,11 @@ from .encoding import (
 )
 
 from .vit import (
-    ClassifierHead,
-    EncoderBlock,
-    Encoder,
-    PatchEmbedding,
     BaseViT,
-    ClassifierViT
+    ClassifierViT,
+    ClassifierHead,
+    Encoder,
+    EncoderBlock,
+    PatchEmbedding
 )
 

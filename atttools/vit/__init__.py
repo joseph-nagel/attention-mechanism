@@ -4,28 +4,28 @@ Vision transformer.
 Summary
 -------
 The vision transformer (ViT) is implemented from scratch.
-For the moment, classification problems are considered.
+For the moment, the focus is on classification problems.
 
 Modules
 -------
-classifier: Classifier head.
+base : ViT base module.
+classifier: ViT classifier.
 encoder : ViT encoder.
 patches : Patch embedding.
-vit : Vision transformer.
 
 '''
 
+from . import base
 from . import classifier
 from . import encoder
 from . import patches
-from . import vit
 
 
-from .classifier import ClassifierHead
+from .base import BaseViT
+
+from .classifier import ClassifierHead, ClassifierViT
 
 from .encoder import EncoderBlock, Encoder
 
 from .patches import PatchEmbedding
-
-from .vit import BaseViT, ClassifierViT
 
