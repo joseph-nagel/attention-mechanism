@@ -24,3 +24,5 @@ python scripts/main.py fit --config config/vit_fmnist.yaml
 
 - [Tensor shapes](notebooks/shapes.ipynb)
 
+- [Fashion MNIST example](notebooks/vit_fmnist.ipynb)
+
