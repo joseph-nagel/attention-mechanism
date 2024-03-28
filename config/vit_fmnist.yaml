@@ -17,13 +17,14 @@ model:
     in_channels: 1
     embed_dim: 128
     num_classes: 10
-    num_heads: 4
-    num_blocks: 2
+    num_heads: 8
+    num_blocks: 4
     num_patches: 16
     patch_size: 7
     mlp_dim: null
     mlp_dropout: 0.0
     lr: 0.0003
+    warmup: 3
 
 trainer:
   accelerator: "cpu"
@@ -36,6 +37,9 @@ trainer:
       name: "fmnist"
       version: null
   callbacks:
+    - class_path: "lightning.pytorch.callbacks.LearningRateMonitor"
+      init_args:
+        logging_interval: "step"
     - class_path: "lightning.pytorch.callbacks.ModelCheckpoint"
       init_args:
         filename: "best"

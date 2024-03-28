@@ -20,6 +20,8 @@ class BaseViT(LightningModule):
         Loss function.
     lr : float, optional
         Initial optimizer learning rate.
+    warmup : int, optional
+        Warmup steps/epochs.
 
     '''
 
@@ -28,7 +30,8 @@ class BaseViT(LightningModule):
                  encoder,
                  head,
                  lossfcn,
-                 lr=1e-04):
+                 lr=1e-04,
+                 warmup=0):
 
         super().__init__()
 
@@ -38,8 +41,9 @@ class BaseViT(LightningModule):
         self.head = head
         self.lossfcn = lossfcn
 
-        # set initial learning rate
+        # set LR params
         self.lr = abs(lr)
+        self.warmup = abs(int(warmup))
 
         # store hyperparams
         self.save_hyperparameters(
@@ -94,8 +98,38 @@ class BaseViT(LightningModule):
         self.log('test_loss', loss.item()) # Lightning automatically averages scalars over batches for testing
         return loss
 
-    # TODO: enable LR scheduling
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
-        return optimizer
+
+        # create warmup schedule
+        warmup = torch.optim.lr_scheduler.LambdaLR(
+            optimizer=optimizer,
+            lr_lambda=lambda curr: ((curr + 1) / self.warmup) if curr < self.warmup else 1.0
+        )
+
+        # create reduce-on-plateau schedule
+        # reduce = torch.optim.lr_scheduler.ReduceLROnPlateau( # SequentialLR cannot handle ReduceLROnPlateau
+        #     optimizer=optimizer
+        # )
+
+        # create cosine annealing schedule
+        annealing = torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer=optimizer,
+            T_max=self.trainer.max_epochs - self.warmup # consider remaining epochs
+        )
+
+        # create combined schedule
+        lr_scheduler = torch.optim.lr_scheduler.SequentialLR(
+            optimizer=optimizer,
+            schedulers=[warmup, annealing],
+            milestones=[self.warmup]
+        )
+
+        # lr_config = {
+        #     'scheduler': lr_scheduler, # LR scheduler
+        #     'interval': 'epoch', # time unit
+        #     'frequency': 1 # update frequency
+        # }
+
+        return [optimizer], [lr_scheduler]
 

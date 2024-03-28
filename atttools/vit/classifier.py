@@ -73,7 +73,8 @@ class ClassifierViT(BaseViT):
                  patch_size,
                  mlp_dim=None,
                  mlp_dropout=0.0,
-                 lr=1e-04):
+                 lr=1e-04,
+                 warmup=100):
 
         # create patch embedding
         patchemb = PatchEmbedding(
@@ -110,7 +111,8 @@ class ClassifierViT(BaseViT):
             encoder=encoder,
             head=classifier,
             lossfcn=lossfcn,
-            lr=lr
+            lr=lr,
+            warmup=warmup
         )
 
         # store hyperparams
