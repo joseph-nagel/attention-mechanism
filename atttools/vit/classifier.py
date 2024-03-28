@@ -1,7 +1,7 @@
 '''ViT classifier.'''
 
 import torch.nn as nn
-from torchmetrics.classification import Accuracy
+from torchmetrics.classification import Accuracy, ConfusionMatrix
 
 from .base import BaseViT
 from .encoder import Encoder
@@ -123,6 +123,8 @@ class ClassifierViT(BaseViT):
         self.val_acc = Accuracy(task='multiclass', num_classes=num_classes)
         self.test_acc = Accuracy(task='multiclass', num_classes=num_classes)
 
+        self.test_confmat = ConfusionMatrix(task='multiclass', num_classes=num_classes)
+
     def training_step(self, batch, batch_idx):
         x_batch, y_batch = self._get_batch(batch)
 
@@ -152,7 +154,16 @@ class ClassifierViT(BaseViT):
         loss = self.lossfcn(y_pred, y_batch)
         _ = self.test_acc(y_pred, y_batch)
 
+        _ = self.test_confmat.update(y_pred, y_batch)
+
         self.log('test_loss', loss.item()) # Lightning automatically averages scalars over batches for testing
         self.log('test_acc', self.test_acc) # the batch size is considered for torchmetrics.Metric objects
         return loss
+
+    # non-scalar metrics cannot be logged, hence the following workaround for the confusion matrix
+    def on_test_epoch_start(self):
+        self.test_confmat.reset()
+
+    def on_test_epoch_end(self):
+        self.test_confmat.compute()
 
