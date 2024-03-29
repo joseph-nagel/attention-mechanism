@@ -51,11 +51,26 @@ class BaseViT(LightningModule):
             logger=True
         )
 
-    def forward(self, x):
+    def forward(self, x, return_weights=False):
+
+        # run patch embedding
         x = self.patchemb(x)
-        x = self.encoder(x)
+
+        # run transformer encoder
+        out = self.encoder(x, return_weights=return_weights)
+
+        if return_weights:
+            x, weights = out
+        else:
+            x = out
+
+        # run prediction head
         x = self.head(x)
-        return x
+
+        if return_weights:
+            return x, weights
+        else:
+            return x
 
     @staticmethod
     def _get_batch(batch):
@@ -76,7 +91,7 @@ class BaseViT(LightningModule):
 
     def loss(self, x, y):
         '''Compute the loss function.'''
-        y_pred = self(x)
+        y_pred = self(x, return_weights=False)
         loss = self.lossfcn(y_pred, y)
         return loss
 

@@ -1,5 +1,6 @@
 '''ViT encoder.'''
 
+import torch
 import torch.nn as nn
 
 from ..attention import MultiheadSelfAttention
@@ -68,24 +69,37 @@ class EncoderBlock(nn.Module):
             nn.Dropout(mlp_dropout)
         )
 
-    def forward(self, x):
+    def forward(self, x, return_weights=False):
 
         # run attention block
         y = self.ln1(x)
 
         if self.use_custom_mha:
-            y = x + self.att(y)
+            if return_weights:
+                raise NotImplementedError('Returning the weights from custom attention is not implemented')
+
+            vals = self.att(y)
+
         else:
-            y = x + self.att(y, y, y, need_weights=False)[0]
+            out = self.att(y, y, y, need_weights=return_weights)
+            vals = out[0]
+
+            if return_weights:
+                weights = out[1]
+
+        y = x + vals
 
         # run MLP block
         z = self.ln2(y)
         z = y + self.mlp(z)
 
-        return z
+        if return_weights:
+            return z, weights
+        else:
+            return z
 
 
-class Encoder(nn.Sequential):
+class Encoder(nn.Module):
     '''
     ViT encoder.
 
@@ -115,6 +129,8 @@ class Encoder(nn.Sequential):
                  mlp_dropout=0.0,
                  use_custom_mha=False):
 
+        super().__init__()
+
         # create encoder blocks
         blocks = [
             EncoderBlock(
@@ -127,6 +143,26 @@ class Encoder(nn.Sequential):
             ) for _ in range(num_blocks)
         ]
 
-        # initialize module
-        super().__init__(*blocks)
+        self.blocks = nn.ModuleList(blocks)
+
+    def forward(self, x, return_weights=False):
+
+        if return_weights:
+            weights = []
+
+        # run encoder blocks
+        for b in self.blocks:
+            out = b(x, return_weights=return_weights)
+
+            if return_weights:
+                x, w = out
+                weights.append(w)
+            else:
+                x = out
+
+        if return_weights:
+            weights = torch.cat([w.unsqueeze(1) for w in weights], dim=1)
+            return x, weights
+        else:
+            return x
 

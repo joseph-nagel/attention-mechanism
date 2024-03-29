@@ -128,7 +128,7 @@ class ClassifierViT(BaseViT):
     def training_step(self, batch, batch_idx):
         x_batch, y_batch = self._get_batch(batch)
 
-        y_pred = self(x_batch)
+        y_pred = self(x_batch, return_weights=False)
         loss = self.lossfcn(y_pred, y_batch)
         _ = self.train_acc(y_pred, y_batch)
 
@@ -139,7 +139,7 @@ class ClassifierViT(BaseViT):
     def validation_step(self, batch, batch_idx):
         x_batch, y_batch = self._get_batch(batch)
 
-        y_pred = self(x_batch)
+        y_pred = self(x_batch, return_weights=False)
         loss = self.lossfcn(y_pred, y_batch)
         _ = self.val_acc(y_pred, y_batch)
 
@@ -150,7 +150,7 @@ class ClassifierViT(BaseViT):
     def test_step(self, batch, batch_idx):
         x_batch, y_batch = self._get_batch(batch)
 
-        y_pred = self(x_batch)
+        y_pred = self(x_batch, return_weights=False)
         loss = self.lossfcn(y_pred, y_batch)
         _ = self.test_acc(y_pred, y_batch)
 
