@@ -31,7 +31,7 @@ from .attention import (
     SelfAttention2D
 )
 
-from .data import FashionMNISTDataModule
+from .data import MNISTDataModule
 
 from .encoding import (
     make_frequencies,

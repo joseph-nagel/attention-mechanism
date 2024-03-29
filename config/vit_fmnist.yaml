@@ -3,11 +3,12 @@ seed_everything: null
 ckpt_path: null
 
 data:
-  class_path: "atttools.FashionMNISTDataModule"
+  class_path: "atttools.MNISTDataModule"
   init_args:
+    data_set: "fmnist"
     data_dir: "run/data"
-    mean: null
-    std: null
+    mean: 0.5
+    std: 0.5
     batch_size: 32
     num_workers: 0
 
