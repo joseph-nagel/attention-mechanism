@@ -81,7 +81,7 @@ class ClassifierViT(BaseViT):
             in_channels=in_channels,
             embed_dim=embed_dim,
             patch_size=patch_size,
-            use_cls_token=True,
+            use_cls_token=True, # use class token attending to patch tokens for classification
             use_pos_embedding=True,
             num_patches=num_patches
         )

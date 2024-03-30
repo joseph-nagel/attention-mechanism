@@ -15,6 +15,10 @@ pip install -e .
 ## ViT training
 
 ```
+python scripts/main.py fit --config config/vit_mnist.yaml
+```
+
+```
 python scripts/main.py fit --config config/vit_fmnist.yaml
 ```
 
