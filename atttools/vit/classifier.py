@@ -162,8 +162,8 @@ class ClassifierViT(BaseViT):
 
     # non-scalar metrics cannot be logged, hence the following workaround for the confusion matrix
     def on_test_epoch_start(self):
-        self.test_confmat.reset()
+        self.test_confmat.reset() # reset metric such that subsequent test runs do no accumulate
 
-    def on_test_epoch_end(self):
-        self.test_confmat.compute()
+    # def on_test_epoch_end(self):
+    #     confmat = self.test_confmat.compute() # aggregate metric (should be better done manually)
 
