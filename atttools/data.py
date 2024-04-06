@@ -42,6 +42,8 @@ class MNISTDataModule(LightningDataModule):
             self.data_class = datasets.MNIST
         elif data_set in ('fashion_mnist', 'fmnist'):
             self.data_class = datasets.FashionMNIST
+        elif data_set in ('kuzushiji_mnist', 'kmnist'):
+            self.data_class = datasets.KMNIST
         else:
             raise ValueError(f'Invalid dataset: {data_set}')
 
