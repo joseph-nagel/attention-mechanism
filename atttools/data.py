@@ -22,7 +22,7 @@ class MNISTDataModule(LightningDataModule):
         Standard deviation for normalization.
     batch_size : int, optional
         Batch size of the data loader.
-    num_workers :
+    num_workers : int, optional
         Number of workers for the loader.
 
     '''
