@@ -193,9 +193,9 @@ class SelfAttention2D(nn.Module):
 
     Parameters
     ----------
-    in_channels : int
+    num_channels : int
         Number of input and output channels.
-    out_channels : int
+    num_queries_keys : int
         Number of queries and keys.
     scale : bool
         Determines whether scores are scaled.
@@ -203,23 +203,23 @@ class SelfAttention2D(nn.Module):
     '''
 
     def __init__(self,
-                 in_channels,
-                 out_channels=None,
+                 num_channels,
+                 num_queries_keys=None,
                  scale=False):
 
         super().__init__()
 
-        if out_channels is None:
-            out_channels = in_channels // 8 # set to the default value in the paper
+        if num_queries_keys is None:
+            num_queries_keys = num_channels // 8 # set to the default value in the paper
 
-        self.f = nn.Conv1d(in_channels, out_channels, kernel_size=1, bias=False) # query
-        self.g = nn.Conv1d(in_channels, out_channels, kernel_size=1, bias=False) # key
-        self.h = nn.Conv1d(in_channels, in_channels, kernel_size=1, bias=False) # value
+        self.f = nn.Conv1d(num_channels, num_queries_keys, kernel_size=1, bias=False) # query
+        self.g = nn.Conv1d(num_channels, num_queries_keys, kernel_size=1, bias=False) # key
+        self.h = nn.Conv1d(num_channels, num_channels, kernel_size=1, bias=False) # value
 
         self.gamma = nn.Parameter(torch.tensor(0.0))
 
         if scale:
-            d_k_sqrt = torch.tensor(out_channels).sqrt()
+            d_k_sqrt = torch.tensor(num_queries_keys).sqrt()
             self.register_buffer('scale', d_k_sqrt)
         else:
             self.scale = None
