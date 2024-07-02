@@ -17,11 +17,12 @@ vit : Vision transformer.
 
 '''
 
-from . import attention
-from . import data
-from . import encoding
-from . import vit
-
+from . import (
+    attention,
+    data,
+    encoding,
+    vit
+)
 
 from .attention import (
     attend,
