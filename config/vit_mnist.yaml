@@ -3,7 +3,7 @@ seed_everything: null
 ckpt_path: null
 
 data:
-  class_path: "atttools.MNISTDataModule"
+  class_path: "att_tools.MNISTDataModule"
   init_args:
     data_set: "mnist"
     data_dir: "run/data"
@@ -13,7 +13,7 @@ data:
     num_workers: 0
 
 model:
-  class_path: "atttools.ClassifierViT"
+  class_path: "att_tools.ClassifierViT"
   init_args:
     in_channels: 1
     embed_dim: 128

@@ -3,10 +3,10 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["atttools"]
+packages = ["att_tools"]
 
 [project]
-name = "atttools"
+name = "att-tools"
 version = "0.0.1"
 description = "Attention tools"
 readme = "README.md"
