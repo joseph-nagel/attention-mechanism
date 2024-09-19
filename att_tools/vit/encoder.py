@@ -16,11 +16,11 @@ class EncoderBlock(nn.Module):
         Number of embedding features.
     num_heads : int
         Number of attention heads.
-    mlp_dim : int, optional
+    mlp_dim : int
         MLP hidden dimensionality.
-    mlp_dropout : float, optional
+    mlp_dropout : float
         MLP dropout rate.
-    use_custom_mha : bool, optional
+    use_custom_mha : bool
         Determines whether a custom or a native Pytorch
         implementation of multihead attention is used.
 
@@ -111,11 +111,11 @@ class Encoder(nn.Module):
         Number of attention heads.
     num_blocks : int
         Number of encoder blocks.
-    mlp_dim : int, optional
+    mlp_dim : int
         MLP hidden dimensionality.
-    mlp_dropout : float, optional
+    mlp_dropout : float
         MLP dropout rate.
-    use_custom_mha : bool, optional
+    use_custom_mha : bool
         Determines whether a custom or a native Pytorch
         implementation of multihead attention is used.
 

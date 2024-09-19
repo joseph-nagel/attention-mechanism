@@ -50,15 +50,15 @@ class ClassifierViT(BaseViT):
         Number of attention heads.
     num_blocks : int
         Number of encoder blocks.
-    num_patches : int, optional
+    num_patches : int
         Prefixed number of patches, required for pos. embedding.
     patch_size : int
         Size of the patches.
-    mlp_dim : int, optional
+    mlp_dim : int
         MLP hidden dimensionality.
-    mlp_dropout : float, optional
+    mlp_dropout : float
         MLP dropout rate.
-    lr : float, optional
+    lr : float
         Initial optimizer learning rate.
 
     '''

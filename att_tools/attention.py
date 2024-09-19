@@ -131,7 +131,7 @@ class MultiheadSelfAttention(nn.Module):
         Number of input/output features.
     num_heads : int
         Number of attention heads.
-    scale : bool, optional
+    scale : bool
         Determines whether scores are scaled.
 
     '''

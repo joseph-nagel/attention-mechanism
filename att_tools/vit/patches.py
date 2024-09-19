@@ -24,11 +24,11 @@ class PatchEmbedding(nn.Module):
         Number of embedding features.
     patch_size : int
         Size of the patches.
-    use_cls_token : bool, optional
+    use_cls_token : bool
         Determines whether a BERT-like class token is utilized.
-    use_pos_embedding : bool, optional
+    use_pos_embedding : bool
         Determines whether an additional pos. embedding is learned.
-    num_patches : int, optional
+    num_patches : int
         Prefixed number of patches, required for pos. embedding.
 
     '''

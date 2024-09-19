@@ -18,9 +18,9 @@ class BaseViT(LightningModule):
         Prediction head.
     lossfcn : PyTorch module or callable
         Loss function.
-    lr : float, optional
+    lr : float
         Initial optimizer learning rate.
-    warmup : int, optional
+    warmup : int
         Warmup steps/epochs.
 
     '''
