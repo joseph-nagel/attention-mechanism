@@ -144,7 +144,7 @@ class ClassifierViT(BaseViT):
         _ = self.val_acc(y_pred, y_batch)
 
         self.log('val_loss', loss.item()) # Lightning automatically averages scalars over batches for validation
-        self.log('val_acc', self.val_acc) # the batch size is considered for torchmetrics.Metric objects
+        self.log('val_acc', self.val_acc) # the batch size is considered when logging torchmetrics.Metric objects
         return loss
 
     def test_step(self, batch, batch_idx):
@@ -157,7 +157,7 @@ class ClassifierViT(BaseViT):
         _ = self.test_confmat.update(y_pred, y_batch)
 
         self.log('test_loss', loss.item()) # Lightning automatically averages scalars over batches for testing
-        self.log('test_acc', self.test_acc) # the batch size is considered for torchmetrics.Metric objects
+        self.log('test_acc', self.test_acc) # the batch size is considered when logging torchmetrics.Metric objects
         return loss
 
     # non-scalar metrics cannot be logged, hence the following workaround for the confusion matrix
