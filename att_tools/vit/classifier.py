@@ -1,5 +1,8 @@
 '''ViT classifier.'''
 
+from collections.abc import Sequence
+
+import torch
 import torch.nn as nn
 from torchmetrics.classification import Accuracy, ConfusionMatrix
 
@@ -21,13 +24,13 @@ class ClassifierHead(nn.Module):
 
     '''
 
-    def __init__(self, embed_dim, num_classes):
+    def __init__(self, embed_dim: int, num_classes: int) -> None:
         super().__init__()
 
         self.ln = nn.LayerNorm(embed_dim)
         self.linear = nn.Linear(embed_dim, num_classes)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         cls_token = x[:,0] # consider class token
         out = self.ln(cls_token)
         out = self.linear(out)
@@ -63,18 +66,20 @@ class ClassifierViT(BaseViT):
 
     '''
 
-    def __init__(self,
-                 in_channels,
-                 embed_dim,
-                 num_classes,
-                 num_heads,
-                 num_blocks,
-                 num_patches,
-                 patch_size,
-                 mlp_dim=None,
-                 mlp_dropout=0.0,
-                 lr=1e-04,
-                 warmup=100):
+    def __init__(
+        self,
+        in_channels: int,
+        embed_dim: int,
+        num_classes: int,
+        num_heads: int,
+        num_blocks: int,
+        num_patches: int,
+        patch_size: int,
+        mlp_dim: int | None = None,
+        mlp_dropout: float = 0.0,
+        lr: float = 1e-04,
+        warmup: int = 100
+    ) -> None:
 
         # create patch embedding
         patchemb = PatchEmbedding(
@@ -125,7 +130,12 @@ class ClassifierViT(BaseViT):
 
         self.test_confmat = ConfusionMatrix(task='multiclass', num_classes=num_classes)
 
-    def training_step(self, batch, batch_idx):
+    def training_step(
+        self,
+        batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
+        batch_idx: int
+    ) -> torch.Tensor:
+
         x_batch, y_batch = self._get_batch(batch)
 
         y_pred = self(x_batch, return_weights=False)
@@ -134,9 +144,15 @@ class ClassifierViT(BaseViT):
 
         self.log('train_loss', loss.item()) # Lightning logs batch-wise scalars during training per default
         self.log('train_acc', self.train_acc) # the same applies to torchmetrics.Metric objects
+
         return loss
 
-    def validation_step(self, batch, batch_idx):
+    def validation_step(
+        self,
+        batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
+        batch_idx: int
+    ) -> torch.Tensor:
+
         x_batch, y_batch = self._get_batch(batch)
 
         y_pred = self(x_batch, return_weights=False)
@@ -145,9 +161,15 @@ class ClassifierViT(BaseViT):
 
         self.log('val_loss', loss.item()) # Lightning automatically averages scalars over batches for validation
         self.log('val_acc', self.val_acc) # the batch size is considered when logging torchmetrics.Metric objects
+
         return loss
 
-    def test_step(self, batch, batch_idx):
+    def test_step(
+        self,
+        batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
+        batch_idx: int
+    ) -> torch.Tensor:
+
         x_batch, y_batch = self._get_batch(batch)
 
         y_pred = self(x_batch, return_weights=False)
@@ -158,12 +180,13 @@ class ClassifierViT(BaseViT):
 
         self.log('test_loss', loss.item()) # Lightning automatically averages scalars over batches for testing
         self.log('test_acc', self.test_acc) # the batch size is considered when logging torchmetrics.Metric objects
+
         return loss
 
     # non-scalar metrics cannot be logged, hence the following workaround for the confusion matrix
-    def on_test_epoch_start(self):
+    def on_test_epoch_start(self) -> None:
         self.test_confmat.reset() # reset metric such that subsequent test runs do no accumulate
 
-    # def on_test_epoch_end(self):
+    # def on_test_epoch_end(self) -> None:
     #     confmat = self.test_confmat.compute() # aggregate metric (should be better done manually)
 

@@ -1,6 +1,9 @@
 '''ViT base module.'''
 
+from collections.abc import Callable, Sequence
+
 import torch
+import torch.nn as nn
 from lightning.pytorch import LightningModule
 
 
@@ -25,13 +28,15 @@ class BaseViT(LightningModule):
 
     '''
 
-    def __init__(self,
-                 patchemb,
-                 encoder,
-                 head,
-                 lossfcn,
-                 lr=1e-04,
-                 warmup=0):
+    def __init__(
+        self,
+        patchemb: nn.Module,
+        encoder: nn.Module,
+        head: nn.Module,
+        lossfcn: nn.Module | Callable[[torch.Tensor], torch.Tensor],
+        lr: float = 1e-04,
+        warmup: int = 0
+    ) -> None:
 
         super().__init__()
 
@@ -51,7 +56,11 @@ class BaseViT(LightningModule):
             logger=True
         )
 
-    def forward(self, x, return_weights=False):
+    def forward(
+        self,
+        x: torch.Tensor,
+        return_weights: bool = False
+    ) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
 
         # run patch embedding
         x = self.patchemb(x)
@@ -73,10 +82,12 @@ class BaseViT(LightningModule):
             return x
 
     @staticmethod
-    def _get_batch(batch):
+    def _get_batch(
+        batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor]
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         '''Get batch features and labels.'''
 
-        if isinstance(batch, (tuple, list)):
+        if isinstance(batch, Sequence):
             x_batch = batch[0]
             y_batch = batch[1]
 
@@ -89,31 +100,49 @@ class BaseViT(LightningModule):
 
         return x_batch, y_batch
 
-    def loss(self, x, y):
+    def loss(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
         '''Compute the loss function.'''
         y_pred = self(x, return_weights=False)
         loss = self.lossfcn(y_pred, y)
         return loss
 
-    def training_step(self, batch, batch_idx):
+    def training_step(
+        self,
+        batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
+        batch_idx: int
+    ) -> torch.Tensor:
+
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
         self.log('train_loss', loss.item()) # Lightning logs batch-wise scalars during training per default
+
         return loss
 
-    def validation_step(self, batch, batch_idx):
+    def validation_step(
+        self,
+        batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
+        batch_idx: int
+    ) -> torch.Tensor:
+
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
         self.log('val_loss', loss.item()) # Lightning automatically averages scalars over batches for validation
+
         return loss
 
-    def test_step(self, batch, batch_idx):
+    def test_step(
+        self,
+        batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
+        batch_idx: int
+    ) -> torch.Tensor:
+
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
         self.log('test_loss', loss.item()) # Lightning automatically averages scalars over batches for testing
+
         return loss
 
-    def configure_optimizers(self):
+    def configure_optimizers(self) -> tuple[list, list]:
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
 
         # create warmup schedule

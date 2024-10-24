@@ -10,7 +10,7 @@ name = "att-tools"
 version = "0.0.1"
 description = "Attention tools"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 license = {file = "LICENSE"}
 authors = [
     {name = "Joseph Nagel", email = "JosephBNagel@gmail.com"}

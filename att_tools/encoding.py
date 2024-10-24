@@ -13,20 +13,24 @@ import torch
 import torch.nn as nn
 
 
-def make_frequencies(embed_dim):
+def make_frequencies(embed_dim: int) -> torch.Tensor:
     '''Create angular frequencies.'''
 
     # create frequencies
     i = torch.arange(embed_dim // 2)
     omega = 1 / (10000 ** (2 * i / embed_dim))
 
-    # reshape into (1, embed_dim//2)
+    # reshape into (1, embed_dim // 2)
     omega = omega.view(1, -1)
 
     return omega
 
 
-def encode_position(t, embed_dim, omega=None):
+def encode_position(
+    t: torch.Tensor,
+    embed_dim: int,
+    omega: torch.Tensor | None = None
+) -> torch.Tensor:
     '''Compute sinusoidal encoding.'''
 
     # create frequencies if not passed
@@ -51,7 +55,7 @@ def encode_position(t, embed_dim, omega=None):
     return emb
 
 
-def make_encoding(max_length, embed_dim):
+def make_encoding(max_length: int, embed_dim: int) -> nn.Embedding:
     '''
     Create sinusoidal encoding lookup table.
 
@@ -92,7 +96,7 @@ class SinusoidalEncoding(nn.Module):
 
     '''
 
-    def __init__(self, embed_dim):
+    def __init__(self, embed_dim: int) -> None:
 
         super().__init__()
 
@@ -111,7 +115,7 @@ class SinusoidalEncoding(nn.Module):
 
         self.register_buffer('omega', omega)
 
-    def forward(self, t):
+    def forward(self, t: torch.Tensor) -> torch.Tensor:
         emb = encode_position(
             t=t,
             embed_dim=self.embed_dim,

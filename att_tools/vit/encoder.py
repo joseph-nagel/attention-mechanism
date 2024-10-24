@@ -26,12 +26,14 @@ class EncoderBlock(nn.Module):
 
     '''
 
-    def __init__(self,
-                 embed_dim,
-                 num_heads,
-                 mlp_dim=None,
-                 mlp_dropout=0.0,
-                 use_custom_mha=False):
+    def __init__(
+        self,
+        embed_dim: int,
+        num_heads: int,
+        mlp_dim: int | None = None,
+        mlp_dropout: float = 0.0,
+        use_custom_mha: bool = False
+    ) -> None:
 
         super().__init__()
 
@@ -69,7 +71,11 @@ class EncoderBlock(nn.Module):
             nn.Dropout(mlp_dropout)
         )
 
-    def forward(self, x, return_weights=False):
+    def forward(
+        self,
+        x: torch.Tensor,
+        return_weights: bool = False
+    ) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
 
         # run attention block
         y = self.ln1(x)
@@ -121,13 +127,15 @@ class Encoder(nn.Module):
 
     '''
 
-    def __init__(self,
-                 embed_dim,
-                 num_heads,
-                 num_blocks,
-                 mlp_dim=None,
-                 mlp_dropout=0.0,
-                 use_custom_mha=False):
+    def __init__(
+        self,
+        embed_dim: int,
+        num_heads: int,
+        num_blocks: int,
+        mlp_dim: int | None = None,
+        mlp_dropout: float = 0.0,
+        use_custom_mha: bool = False
+    ) -> None:
 
         super().__init__()
 
@@ -145,7 +153,11 @@ class Encoder(nn.Module):
 
         self.blocks = nn.ModuleList(blocks)
 
-    def forward(self, x, return_weights=False):
+    def forward(
+        self,
+        x: torch.Tensor,
+        return_weights: bool = False
+    ) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
 
         if return_weights:
             weights = []

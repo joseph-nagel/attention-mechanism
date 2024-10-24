@@ -33,13 +33,15 @@ class PatchEmbedding(nn.Module):
 
     '''
 
-    def __init__(self,
-                 in_channels,
-                 embed_dim,
-                 patch_size,
-                 use_cls_token=False,
-                 use_pos_embedding=False,
-                 num_patches=None):
+    def __init__(
+        self,
+        in_channels: int,
+        embed_dim: int,
+        patch_size: int,
+        use_cls_token: bool = False,
+        use_pos_embedding: bool = False,
+        num_patches: int | None = None
+    ) -> None:
 
         super().__init__()
 
@@ -77,7 +79,7 @@ class PatchEmbedding(nn.Module):
         else:
             self.pos_embedding = None
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
 
         # embed patches
         x = self.conv(x) # (b, c, h', w')

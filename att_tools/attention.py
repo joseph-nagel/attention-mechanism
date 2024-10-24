@@ -17,7 +17,12 @@ import torch
 import torch.nn as nn
 
 
-def attend(Q, K, V, scale=True):
+def attend(
+    Q: torch.Tensor,
+    K: torch.Tensor,
+    V: torch.Tensor,
+    scale: bool = True
+) -> torch.Tensor:
     '''Compute (scaled) dot-product attention.'''
 
     # compute alignment scores
@@ -36,7 +41,13 @@ def attend(Q, K, V, scale=True):
     return attn
 
 
-def self_attend(X, W_q, W_k, W_v, scale=True):
+def self_attend(
+    X: torch.Tensor,
+    W_q: torch.Tensor,
+    W_k: torch.Tensor,
+    W_v: torch.Tensor,
+    scale: bool = True
+) -> torch.Tensor:
     '''Compute (scaled) dot-product self-attention.'''
 
     # compute queries, keys and values
@@ -72,11 +83,13 @@ class SelfAttention(nn.Module):
 
     '''
 
-    def __init__(self,
-                 d_x,
-                 d_k=None,
-                 d_v=None,
-                 scale=True):
+    def __init__(
+        self,
+        d_x: int,
+        d_k: int | None = None,
+        d_v: int | None = None,
+        scale: bool = True
+    ) -> None:
 
         super().__init__()
 
@@ -92,7 +105,7 @@ class SelfAttention(nn.Module):
 
         self.scale = scale
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
 
         # ensure (batch, sequence, features)-shaped input
         if x.ndim == 2:
@@ -136,10 +149,12 @@ class MultiheadSelfAttention(nn.Module):
 
     '''
 
-    def __init__(self,
-                 embed_dim,
-                 num_heads,
-                 scale=True):
+    def __init__(
+        self,
+        embed_dim: int,
+        num_heads: int,
+        scale: bool = True
+    ) -> None:
 
         super().__init__()
 
@@ -164,7 +179,7 @@ class MultiheadSelfAttention(nn.Module):
         # create linear layer
         # self.linear = nn.Linear(embed_dim, embed_dim, bias=True)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
 
         # ensure (batch, sequence, features)-shaped input
         if x.ndim == 2:
@@ -202,10 +217,12 @@ class SelfAttention2D(nn.Module):
 
     '''
 
-    def __init__(self,
-                 num_channels,
-                 num_queries_keys=None,
-                 scale=False):
+    def __init__(
+        self,
+        num_channels: int,
+        num_queries_keys: int | None = None,
+        scale: bool = False
+    ) -> None:
 
         super().__init__()
 
@@ -224,7 +241,7 @@ class SelfAttention2D(nn.Module):
         else:
             self.scale = None
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         b, c, h, w = x.shape
 
         # flatten tensor (last axis contains the sequence)
