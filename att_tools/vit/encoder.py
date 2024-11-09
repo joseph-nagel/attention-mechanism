@@ -16,7 +16,7 @@ class EncoderBlock(nn.Module):
         Number of embedding features.
     num_heads : int
         Number of attention heads.
-    mlp_dim : int
+    mlp_dim : int or None
         MLP hidden dimensionality.
     mlp_dropout : float
         MLP dropout rate.
@@ -117,7 +117,7 @@ class Encoder(nn.Module):
         Number of attention heads.
     num_blocks : int
         Number of encoder blocks.
-    mlp_dim : int
+    mlp_dim : int or None
         MLP hidden dimensionality.
     mlp_dropout : float
         MLP dropout rate.

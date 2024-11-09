@@ -16,9 +16,9 @@ class MNISTDataModule(LightningDataModule):
         Determines the MNIST-like dataset.
     data_dir : str
         Directory for storing the data.
-    mean : float
+    mean : float or None
         Mean for data normalization.
-    std : float
+    std : float or None
         Standard deviation for normalization.
     batch_size : int
         Batch size of the data loader.

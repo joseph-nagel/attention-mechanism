@@ -28,7 +28,7 @@ class PatchEmbedding(nn.Module):
         Determines whether a BERT-like class token is utilized.
     use_pos_embedding : bool
         Determines whether an additional pos. embedding is learned.
-    num_patches : int
+    num_patches : int or None
         Prefixed number of patches, required for pos. embedding.
 
     '''

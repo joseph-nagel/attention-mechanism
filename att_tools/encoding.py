@@ -116,6 +116,7 @@ class SinusoidalEncoding(nn.Module):
         self.register_buffer('omega', omega)
 
     def forward(self, t: torch.Tensor) -> torch.Tensor:
+
         emb = encode_position(
             t=t,
             embed_dim=self.embed_dim,

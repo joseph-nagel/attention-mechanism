@@ -242,6 +242,8 @@ class SelfAttention2D(nn.Module):
             self.scale = None
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+
+        # get dimensions
         b, c, h, w = x.shape
 
         # flatten tensor (last axis contains the sequence)

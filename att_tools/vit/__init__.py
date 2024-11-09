@@ -15,11 +15,12 @@ patches : Patch embedding.
 
 '''
 
-from . import base
-from . import classifier
-from . import encoder
-from . import patches
-
+from . import (
+    base,
+    classifier,
+    encoder,
+    patches
+)
 
 from .base import BaseViT
 

@@ -31,9 +31,14 @@ class ClassifierHead(nn.Module):
         self.linear = nn.Linear(embed_dim, num_classes)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        cls_token = x[:,0] # consider class token
+
+        # get class token
+        cls_token = x[:,0]
+
+        # apply layer norm and linear layer
         out = self.ln(cls_token)
         out = self.linear(out)
+
         return out
 
 
@@ -57,7 +62,7 @@ class ClassifierViT(BaseViT):
         Prefixed number of patches, required for pos. embedding.
     patch_size : int
         Size of the patches.
-    mlp_dim : int
+    mlp_dim : int or None
         MLP hidden dimensionality.
     mlp_dropout : float
         MLP dropout rate.

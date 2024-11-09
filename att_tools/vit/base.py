@@ -63,23 +63,23 @@ class BaseViT(LightningModule):
     ) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
 
         # run patch embedding
-        x = self.patchemb(x)
+        x = self.patchemb(x) # (batch_size, num_tokens, embed_dim)
 
         # run transformer encoder
-        out = self.encoder(x, return_weights=return_weights)
+        out = self.encoder(x, return_weights=return_weights) # (batch_size, num_tokens, embed_dim)
 
-        if return_weights:
-            x, weights = out
-        else:
+        if isinstance(out, torch.Tensor):
             x = out
+        else:
+            x, weights = out
 
         # run prediction head
-        x = self.head(x)
+        x = self.head(x) # (batch_size, num_outputs)
 
-        if return_weights:
-            return x, weights
-        else:
+        if isinstance(out, torch.Tensor):
             return x
+        else:
+            return x, weights
 
     @staticmethod
     def _get_batch(
@@ -114,6 +114,7 @@ class BaseViT(LightningModule):
 
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
+
         self.log('train_loss', loss.item()) # Lightning logs batch-wise scalars during training per default
 
         return loss
@@ -126,6 +127,7 @@ class BaseViT(LightningModule):
 
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
+
         self.log('val_loss', loss.item()) # Lightning automatically averages scalars over batches for validation
 
         return loss
@@ -138,6 +140,7 @@ class BaseViT(LightningModule):
 
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
+
         self.log('test_loss', loss.item()) # Lightning automatically averages scalars over batches for testing
 
         return loss
