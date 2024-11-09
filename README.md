@@ -6,6 +6,12 @@ A short introduction to attention in deep neural networks is provided.
 The important components of the classical transformer architecture are discussed.
 Following this, a vision transformer (ViT) is implemented and briefly tested.
 
+## Notebooks
+
+- [Introduction](notebooks/intro.ipynb)
+
+- [(Fashion) MNIST example](notebooks/vit.ipynb)
+
 ## Installation
 
 ```
@@ -21,14 +27,4 @@ python scripts/main.py fit --config config/vit_mnist.yaml
 ```
 python scripts/main.py fit --config config/vit_fmnist.yaml
 ```
-
-## Notebooks
-
-- [Introduction](notebooks/intro.ipynb)
-
-- [Tensor shapes](notebooks/shapes.ipynb)
-
-- [(Fashion) MNIST example](notebooks/vit.ipynb)
-
-- [CNN with self-attention](notebooks/cnn_attn.ipynb)
 
