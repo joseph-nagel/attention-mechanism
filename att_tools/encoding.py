@@ -59,6 +59,11 @@ def make_encoding(max_length: int, embed_dim: int) -> nn.Embedding:
     '''
     Create sinusoidal encoding lookup table.
 
+    Summary
+    -------
+    This function assists in creating a lookup table that contains the
+    precomputed values of the sinusoidal encoding up to a maximum length.
+
     Parameters
     ----------
     max_length : int
@@ -89,6 +94,11 @@ class SinusoidalEncoding(nn.Module):
     '''
     Sinusoidal position encoding.
 
+    Summary
+    -------
+    This class implements a sinusoisdal position encoding.
+    Arbitrary positions or times are embedded on the fly.
+
     Parameters
     ----------
     embed_dim : int
@@ -117,6 +127,7 @@ class SinusoidalEncoding(nn.Module):
 
     def forward(self, t: torch.Tensor) -> torch.Tensor:
 
+        # compute embeddings
         emb = encode_position(
             t=t,
             embed_dim=self.embed_dim,

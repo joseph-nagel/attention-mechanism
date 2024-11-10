@@ -1,64 +1,7 @@
-'''
-Dot-product attention.
-
-Summary
--------
-The classical (scaled) dot-product attention variant is implemented.
-A self-attention mechanism relates items at different positions of a sequence.
-In comparison to recurrent architectures, it is parallelizable, does not severely suffer from
-from vanishing/exploding gradients and allows for better capturing longe-range dependencies.
-The latter is also an advantage over conv-layers with limited-size local receptive fields.
-
-'''
-
-import math
+'''Attention layers.'''
 
 import torch
 import torch.nn as nn
-
-
-def attend(
-    Q: torch.Tensor,
-    K: torch.Tensor,
-    V: torch.Tensor,
-    scale: bool = True
-) -> torch.Tensor:
-    '''Compute (scaled) dot-product attention.'''
-
-    # compute alignment scores
-    algn_scores = torch.matmul(Q, K.transpose(-2, -1))
-
-    if scale:
-        d_k = K.shape[-1]
-        algn_scores = algn_scores / math.sqrt(d_k)
-
-    # compute attention weights
-    attn_weights = nn.functional.softmax(algn_scores, dim=-1)
-
-    # compute attention
-    attn = torch.matmul(attn_weights, V)
-
-    return attn
-
-
-def self_attend(
-    X: torch.Tensor,
-    W_q: torch.Tensor,
-    W_k: torch.Tensor,
-    W_v: torch.Tensor,
-    scale: bool = True
-) -> torch.Tensor:
-    '''Compute (scaled) dot-product self-attention.'''
-
-    # compute queries, keys and values
-    Q = torch.matmul(X, W_q)
-    K = torch.matmul(X, W_k)
-    V = torch.matmul(X, W_v)
-
-    # compute attention
-    attn = attend(Q, K, V, scale=scale)
-
-    return attn
 
 
 class SelfAttention(nn.Module):
@@ -74,9 +17,9 @@ class SelfAttention(nn.Module):
     ----------
     d_x : int
         Number of input features.
-    d_k : int
+    d_k : int or None
         Number of queries and keys.
-    d_v : int
+    d_v : int or None
         Number of values.
     scale : bool
         Determines whether scores are scaled.
@@ -99,9 +42,9 @@ class SelfAttention(nn.Module):
         if d_v is None:
             d_v = d_x
 
-        self.q = nn.Linear(d_x, d_k, bias=False) # query
-        self.k = nn.Linear(d_x, d_k, bias=False) # key
-        self.v = nn.Linear(d_x, d_v, bias=False) # value
+        self.q = nn.Linear(d_x, d_k, bias=False) # queries
+        self.k = nn.Linear(d_x, d_k, bias=False) # keys
+        self.v = nn.Linear(d_x, d_v, bias=False) # values
 
         self.scale = scale
 
@@ -111,16 +54,18 @@ class SelfAttention(nn.Module):
         if x.ndim == 2:
             x = x.unsqueeze(0)
         elif x.ndim != 3:
-            raise ValueError('Invalid number of tensor dimensions: {}'.format(x.ndim))
+            raise ValueError(f'Invalid number of tensor dimensions: {x.ndim}')
 
         # compute queries, keys and values
-        Q = self.q(x)
-        K = self.k(x)
-        V = self.v(x)
+        q = self.q(x) # (batch, sequence, d_k)
+        k = self.k(x) # (batch, sequence, d_k)
+        v = self.v(x) # (batch, sequence, d_v)
 
         # compute attention
         attn = nn.functional.scaled_dot_product_attention(
-            Q, K, V,
+            query=q,
+            key=k,
+            value=v,
             scale=None if self.scale else 1.0
         )
 
@@ -141,7 +86,7 @@ class MultiheadSelfAttention(nn.Module):
     Parameters
     ----------
     embed_dim : int
-        Number of input/output features.
+        Number of input and output features.
     num_heads : int
         Number of attention heads.
     scale : bool
@@ -162,7 +107,7 @@ class MultiheadSelfAttention(nn.Module):
         if embed_dim % num_heads == 0:
             head_dim = embed_dim // num_heads
         else:
-            raise ValueError('Embedding dim. must be divisible by head number ')
+            raise ValueError('Embedding dim. must be divisible by head number')
 
         # create attention heads
         heads = [
@@ -185,7 +130,7 @@ class MultiheadSelfAttention(nn.Module):
         if x.ndim == 2:
             x = x.unsqueeze(0)
         elif x.ndim != 3:
-            raise ValueError('Invalid number of tensor dimensions: {}'.format(x.ndim))
+            raise ValueError(f'Invalid number of tensor dimensions: {x.ndim}')
 
         # run attention heads
         x = torch.cat([h(x) for h in self.heads], dim=-1)
@@ -210,7 +155,7 @@ class SelfAttention2D(nn.Module):
     ----------
     num_channels : int
         Number of input and output channels.
-    num_queries_keys : int
+    num_queries_and_keys : int or None
         Number of queries and keys.
     scale : bool
         Determines whether scores are scaled.
@@ -220,39 +165,61 @@ class SelfAttention2D(nn.Module):
     def __init__(
         self,
         num_channels: int,
-        num_queries_keys: int | None = None,
+        num_queries_and_keys: int | None = None,
         scale: bool = False
     ) -> None:
 
         super().__init__()
 
-        if num_queries_keys is None:
-            num_queries_keys = num_channels // 8 # set to the default value in the paper
+        if num_queries_and_keys is None:
+            num_queries_and_keys = num_channels // 8 # set to the default value in the paper
 
-        self.f = nn.Conv1d(num_channels, num_queries_keys, kernel_size=1, bias=False) # query
-        self.g = nn.Conv1d(num_channels, num_queries_keys, kernel_size=1, bias=False) # key
-        self.h = nn.Conv1d(num_channels, num_channels, kernel_size=1, bias=False) # value
+        # create layer predicting queries
+        self.q = nn.Conv1d(
+            num_channels,
+            num_queries_and_keys,
+            kernel_size=1,
+            bias=False
+        )
 
+        # create layer predicting keys
+        self.k = nn.Conv1d(
+            num_channels,
+            num_queries_and_keys,
+            kernel_size=1,
+            bias=False
+        )
+
+        # create layer predicting values
+        self.v = nn.Conv1d(
+            num_channels,
+            num_channels,
+            kernel_size=1,
+            bias=False
+        )
+
+        # initialize attention strength param
         self.gamma = nn.Parameter(torch.tensor(0.0))
 
+        # initialize scaling factor
         if scale:
-            d_k_sqrt = torch.tensor(num_queries_keys).sqrt()
+            d_k_sqrt = torch.tensor(num_queries_and_keys).sqrt()
             self.register_buffer('scale', d_k_sqrt)
         else:
             self.scale = None
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
 
-        # get dimensions
+        # get input dimensions
         b, c, h, w = x.shape
 
         # flatten tensor (last axis contains the sequence)
         x_flattened = x.view(b, c, h*w) # (b, c, h*w)
 
         # compute query, key and value
-        q = self.f(x_flattened) # (b, c', h*w)
-        k = self.g(x_flattened) # (b, c', h*w)
-        v = self.h(x_flattened) # (b, c, h*w)
+        q = self.q(x_flattened) # (b, c', h*w)
+        k = self.k(x_flattened) # (b, c', h*w)
+        v = self.v(x_flattened) # (b, c, h*w)
 
         # compute attention
         algn_scores = torch.bmm(q.transpose(1, 2), k) # (b, h*w, h*w)
