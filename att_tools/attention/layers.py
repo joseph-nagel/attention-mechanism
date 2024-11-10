@@ -48,7 +48,12 @@ class SelfAttention(nn.Module):
 
         self.scale = scale
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self,
+        x: torch.Tensor,
+        attn_mask: torch.Tensor | None = None,
+        is_causal: bool = False
+    ) -> torch.Tensor:
 
         # ensure (batch, sequence, features)-shaped input
         if x.ndim == 2:
@@ -66,6 +71,8 @@ class SelfAttention(nn.Module):
             query=q,
             key=k,
             value=v,
+            attn_mask=attn_mask,
+            is_causal=is_causal,
             scale=None if self.scale else 1.0
         )
 
@@ -124,7 +131,12 @@ class MultiheadSelfAttention(nn.Module):
         # create linear layer
         # self.linear = nn.Linear(embed_dim, embed_dim, bias=True)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self,
+        x: torch.Tensor,
+        attn_mask: torch.Tensor | None = None,
+        is_causal: bool = False
+    ) -> torch.Tensor:
 
         # ensure (batch, sequence, features)-shaped input
         if x.ndim == 2:
@@ -133,7 +145,10 @@ class MultiheadSelfAttention(nn.Module):
             raise ValueError(f'Invalid number of tensor dimensions: {x.ndim}')
 
         # run attention heads
-        x = torch.cat([h(x) for h in self.heads], dim=-1)
+        x = torch.cat(
+            [h(x, attn_mask=attn_mask, is_causal=is_causal) for h in self.heads],
+            dim=-1
+        )
 
         # run linear layer
         # x = self.linear(x)
