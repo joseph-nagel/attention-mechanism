@@ -73,6 +73,14 @@ class MNISTDataModule(LightningDataModule):
         self.train_transform = transforms.Compose(train_transforms)
         self.test_transform = transforms.Compose(test_transforms)
 
+        # create inverse normalization
+        if (mean is not None) and (std is not None):
+
+            self.renormalize = transforms.Compose([
+                transforms.Lambda(lambda x: x * std + mean), # reverse normalization
+                transforms.Lambda(lambda x: x.clamp(0, 1)) # clip to valid range
+            ])
+
     def prepare_data(self) -> None:
         '''Download data.'''
 
@@ -115,6 +123,7 @@ class MNISTDataModule(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         '''Create train dataloader.'''
+
         return DataLoader(
             self.train_set,
             batch_size=self.batch_size,
@@ -126,6 +135,7 @@ class MNISTDataModule(LightningDataModule):
 
     def val_dataloader(self) -> DataLoader:
         '''Create val. dataloader.'''
+
         return DataLoader(
             self.val_set,
             batch_size=self.batch_size,
@@ -137,6 +147,7 @@ class MNISTDataModule(LightningDataModule):
 
     def test_dataloader(self) -> DataLoader:
         '''Create test dataloader.'''
+
         return DataLoader(
             self.test_set,
             batch_size=self.batch_size,
