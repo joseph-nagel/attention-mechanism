@@ -4,7 +4,7 @@ A short introduction to attention in deep neural networks is provided.
 The important components of the classical transformer architecture are discussed.
 Following this, a vision transformer (ViT) is implemented and briefly tested.
 
-<img src="assets/sinusoidal.svg" alt="Sinusoidal encoding of spatial positions or times" title="Sinusoidal encoding" height="300">
+<img src="assets/attention.svg" alt="The scaled dot-product (cross) attention mechanism is visualized" title="Scaled dot-product (cross) attention" height="250">
 
 
 ## Notebooks
