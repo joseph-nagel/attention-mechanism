@@ -42,9 +42,9 @@ class SelfAttention(nn.Module):
         if d_v is None:
             d_v = d_x
 
-        self.q = nn.Linear(d_x, d_k, bias=False) # queries
-        self.k = nn.Linear(d_x, d_k, bias=False) # keys
-        self.v = nn.Linear(d_x, d_v, bias=False) # values
+        self.q = nn.Linear(d_x, d_k, bias=False)  # queries
+        self.k = nn.Linear(d_x, d_k, bias=False)  # keys
+        self.v = nn.Linear(d_x, d_v, bias=False)  # values
 
         self.scale = scale
 
@@ -62,9 +62,9 @@ class SelfAttention(nn.Module):
             raise ValueError(f'Invalid number of tensor dimensions: {x.ndim}')
 
         # compute queries, keys and values
-        q = self.q(x) # (batch, sequence, d_k)
-        k = self.k(x) # (batch, sequence, d_k)
-        v = self.v(x) # (batch, sequence, d_v)
+        q = self.q(x)  # (batch, sequence, d_k)
+        k = self.k(x)  # (batch, sequence, d_k)
+        v = self.v(x)  # (batch, sequence, d_v)
 
         # compute attention
         attn = nn.functional.scaled_dot_product_attention(
@@ -119,9 +119,9 @@ class MultiheadSelfAttention(nn.Module):
         # create attention heads
         heads = [
             SelfAttention(
-                d_x=embed_dim, # input dim. d_x
-                d_k=head_dim, # intermediate dims. with d_q = d_k
-                d_v=head_dim, # output dim. d_v
+                d_x=embed_dim,  # input dim. d_x
+                d_k=head_dim,  # intermediate dims. with d_q = d_k
+                d_v=head_dim,  # output dim. d_v
                 scale=scale
             ) for _ in range(num_heads)
         ]
@@ -187,7 +187,7 @@ class SelfAttention2D(nn.Module):
         super().__init__()
 
         if num_queries_and_keys is None:
-            num_queries_and_keys = num_channels // 8 # set to the default value in the paper
+            num_queries_and_keys = num_channels // 8  # set to the default value in the paper
 
         # create layer predicting queries
         self.q = nn.Conv1d(
@@ -229,28 +229,28 @@ class SelfAttention2D(nn.Module):
         b, c, h, w = x.shape
 
         # flatten tensor (last axis contains the sequence)
-        x_flattened = x.view(b, c, h*w) # (b, c, h*w)
+        x_flattened = x.view(b, c, h*w)  # (b, c, h*w)
 
         # compute query, key and value
-        q = self.q(x_flattened) # (b, c', h*w)
-        k = self.k(x_flattened) # (b, c', h*w)
-        v = self.v(x_flattened) # (b, c, h*w)
+        q = self.q(x_flattened)  # (b, c', h*w)
+        k = self.k(x_flattened)  # (b, c', h*w)
+        v = self.v(x_flattened)  # (b, c, h*w)
 
         # compute attention
-        algn_scores = torch.bmm(q.transpose(1, 2), k) # (b, h*w, h*w)
+        algn_scores = torch.bmm(q.transpose(1, 2), k)  # (b, h*w, h*w)
 
         if self.scale is not None:
             algn_scores = algn_scores / self.scale
 
-        attn_weights = torch.softmax(algn_scores, dim=1) # (b, h*w, h*w)
+        attn_weights = torch.softmax(algn_scores, dim=1)  # (b, h*w, h*w)
 
-        attention = torch.bmm(v, attn_weights) # (b, c, h*w)
+        attention = torch.bmm(v, attn_weights)  # (b, c, h*w)
 
         # add skip connection
-        out = self.gamma * attention + x_flattened # (b, c, h*w)
+        out = self.gamma * attention + x_flattened  # (b, c, h*w)
 
         # reshape
-        out = out.view(b, c, h, w) # (b, c, h, w)
+        out = out.view(b, c, h, w)  # (b, c, h, w)
 
         return out
 

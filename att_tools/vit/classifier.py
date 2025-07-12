@@ -91,7 +91,7 @@ class ClassifierViT(BaseViT):
             in_channels=in_channels,
             embed_dim=embed_dim,
             patch_size=patch_size,
-            use_cls_token=True, # use class token attending to patch tokens for classification
+            use_cls_token=True,  # use class token attending to patch tokens for classification
             use_pos_embedding=True,
             num_patches=num_patches
         )
@@ -147,8 +147,8 @@ class ClassifierViT(BaseViT):
         loss = self.lossfcn(y_pred, y_batch)
         _ = self.train_acc(y_pred, y_batch)
 
-        self.log('train_loss', loss.item()) # Lightning logs batch-wise scalars during training per default
-        self.log('train_acc', self.train_acc) # the same applies to torchmetrics.Metric objects
+        self.log('train_loss', loss.item())  # Lightning logs batch-wise scalars during training per default
+        self.log('train_acc', self.train_acc)  # the same applies to torchmetrics.Metric objects
 
         return loss
 
@@ -164,8 +164,8 @@ class ClassifierViT(BaseViT):
         loss = self.lossfcn(y_pred, y_batch)
         _ = self.val_acc(y_pred, y_batch)
 
-        self.log('val_loss', loss.item()) # Lightning automatically averages scalars over batches for validation
-        self.log('val_acc', self.val_acc) # the batch size is considered when logging torchmetrics.Metric objects
+        self.log('val_loss', loss.item())  # Lightning automatically averages scalars over batches for validation
+        self.log('val_acc', self.val_acc)  # the batch size is considered when logging torchmetrics.Metric objects
 
         return loss
 
@@ -183,15 +183,15 @@ class ClassifierViT(BaseViT):
 
         _ = self.test_confmat.update(y_pred, y_batch)
 
-        self.log('test_loss', loss.item()) # Lightning automatically averages scalars over batches for testing
-        self.log('test_acc', self.test_acc) # the batch size is considered when logging torchmetrics.Metric objects
+        self.log('test_loss', loss.item())  # Lightning automatically averages scalars over batches for testing
+        self.log('test_acc', self.test_acc)  # the batch size is considered when logging torchmetrics.Metric objects
 
         return loss
 
     # non-scalar metrics cannot be logged, hence the following workaround for the confusion matrix
     def on_test_epoch_start(self) -> None:
-        self.test_confmat.reset() # reset metric such that subsequent test runs do no accumulate
+        self.test_confmat.reset()  # reset metric such that subsequent test runs do no accumulate
 
     # def on_test_epoch_end(self) -> None:
-    #     confmat = self.test_confmat.compute() # aggregate metric (should be better done manually)
+    #     confmat = self.test_confmat.compute()  # aggregate metric (should be better done manually)
 

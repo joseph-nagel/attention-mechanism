@@ -63,10 +63,10 @@ class BaseViT(LightningModule):
     ) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
 
         # run patch embedding
-        x = self.patchemb(x) # (batch_size, num_tokens, embed_dim)
+        x = self.patchemb(x)  # (batch_size, num_tokens, embed_dim)
 
         # run transformer encoder
-        out = self.encoder(x, return_weights=return_weights) # (batch_size, num_tokens, embed_dim)
+        out = self.encoder(x, return_weights=return_weights)  # (batch_size, num_tokens, embed_dim)
 
         if isinstance(out, torch.Tensor):
             x = out
@@ -74,7 +74,7 @@ class BaseViT(LightningModule):
             x, weights = out
 
         # run prediction head
-        x = self.head(x) # (batch_size, num_outputs)
+        x = self.head(x)  # (batch_size, num_outputs)
 
         if isinstance(out, torch.Tensor):
             return x
@@ -115,7 +115,7 @@ class BaseViT(LightningModule):
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
 
-        self.log('train_loss', loss.item()) # Lightning logs batch-wise scalars during training per default
+        self.log('train_loss', loss.item())  # Lightning logs batch-wise scalars during training per default
 
         return loss
 
@@ -128,7 +128,7 @@ class BaseViT(LightningModule):
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
 
-        self.log('val_loss', loss.item()) # Lightning automatically averages scalars over batches for validation
+        self.log('val_loss', loss.item())  # Lightning automatically averages scalars over batches for validation
 
         return loss
 
@@ -141,7 +141,7 @@ class BaseViT(LightningModule):
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
 
-        self.log('test_loss', loss.item()) # Lightning automatically averages scalars over batches for testing
+        self.log('test_loss', loss.item())  # Lightning automatically averages scalars over batches for testing
 
         return loss
 
@@ -155,14 +155,14 @@ class BaseViT(LightningModule):
         )
 
         # create reduce-on-plateau schedule
-        # reduce = torch.optim.lr_scheduler.ReduceLROnPlateau( # SequentialLR cannot handle ReduceLROnPlateau
+        # reduce = torch.optim.lr_scheduler.ReduceLROnPlateau(  # SequentialLR cannot handle ReduceLROnPlateau
         #     optimizer=optimizer
         # )
 
         # create cosine annealing schedule
         annealing = torch.optim.lr_scheduler.CosineAnnealingLR(
             optimizer=optimizer,
-            T_max=self.trainer.max_epochs - self.warmup # consider remaining epochs
+            T_max=self.trainer.max_epochs - self.warmup  # consider remaining epochs
         )
 
         # create combined schedule
@@ -173,9 +173,9 @@ class BaseViT(LightningModule):
         )
 
         # lr_config = {
-        #     'scheduler': lr_scheduler, # LR scheduler
-        #     'interval': 'epoch', # time unit
-        #     'frequency': 1 # update frequency
+        #     'scheduler': lr_scheduler,  # LR scheduler
+        #     'interval': 'epoch',  # time unit
+        #     'frequency': 1  # update frequency
         # }
 
         return [optimizer], [lr_scheduler]
