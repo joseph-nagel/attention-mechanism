@@ -74,7 +74,7 @@ class SelfAttention(nn.Module):
             attn_mask=attn_mask,
             is_causal=is_causal,
             scale=None if self.scale else 1.0
-        )
+        )  # (batch, sequence, d_v)
 
         return attn
 
@@ -148,7 +148,7 @@ class MultiheadSelfAttention(nn.Module):
         x = torch.cat(
             [h(x, attn_mask=attn_mask, is_causal=is_causal) for h in self.heads],
             dim=-1
-        )
+        )  # (batch, sequence, features)
 
         # run linear layer
         # x = self.linear(x)
