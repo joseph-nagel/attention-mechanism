@@ -33,7 +33,7 @@ class ClassifierHead(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
 
         # get class token
-        cls_token = x[:,0]
+        cls_token = x[:, 0]  # the class token is usually placed first in the sequence
 
         # apply layer norm and linear layer
         out = self.ln(cls_token)

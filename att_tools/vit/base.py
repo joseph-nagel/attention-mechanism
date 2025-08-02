@@ -146,6 +146,8 @@ class BaseViT(LightningModule):
         return loss
 
     def configure_optimizers(self) -> tuple[list, list]:
+
+        # create optimizer
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
 
         # create warmup schedule
@@ -173,9 +175,9 @@ class BaseViT(LightningModule):
         )
 
         # lr_config = {
-        #     'scheduler': lr_scheduler,  # LR scheduler
-        #     'interval': 'epoch',  # time unit
-        #     'frequency': 1  # update frequency
+        #     'scheduler': lr_scheduler,  # set LR scheduler
+        #     'interval': 'epoch',  # set time unit (step or epoch)
+        #     'frequency': 1  # set update frequency
         # }
 
         return [optimizer], [lr_scheduler]
