@@ -253,4 +253,3 @@ class SelfAttention2D(nn.Module):
         out = out.view(b, c, h, w)  # (b, c, h, w)
 
         return out
-

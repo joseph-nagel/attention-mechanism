@@ -194,4 +194,3 @@ class ClassifierViT(BaseViT):
 
     # def on_test_epoch_end(self) -> None:
     #     confmat = self.test_confmat.compute()  # aggregate metric (should be better done manually)
-

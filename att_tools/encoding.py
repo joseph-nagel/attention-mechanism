@@ -135,4 +135,3 @@ class SinusoidalEncoding(nn.Module):
         )
 
         return emb
-

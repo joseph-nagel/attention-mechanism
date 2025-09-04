@@ -25,4 +25,3 @@ from .layers import (
     MultiheadSelfAttention,
     SelfAttention2D
 )
-

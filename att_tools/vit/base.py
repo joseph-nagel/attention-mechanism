@@ -181,4 +181,3 @@ class BaseViT(LightningModule):
         # }
 
         return [optimizer], [lr_scheduler]
-

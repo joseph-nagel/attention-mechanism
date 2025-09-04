@@ -10,7 +10,6 @@ Following this, a vision transformer (ViT) is implemented and briefly tested.
 ## Notebooks
 
 - [Introduction](notebooks/intro.ipynb)
-
 - [(Fashion) MNIST example](notebooks/vit.ipynb)
 
 
@@ -30,4 +29,3 @@ python scripts/main.py fit --config config/vit_mnist.yaml
 ```
 python scripts/main.py fit --config config/vit_fmnist.yaml
 ```
-

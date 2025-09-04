@@ -177,4 +177,3 @@ class Encoder(nn.Module):
             return x, weights
         else:
             return x
-

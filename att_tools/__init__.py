@@ -49,4 +49,3 @@ from .vit import (
     EncoderBlock,
     PatchEmbedding
 )
-

@@ -99,4 +99,3 @@ class PatchEmbedding(nn.Module):
             x = x + pos_embedding  # (b, p(+1), c)
 
         return x
-

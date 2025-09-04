@@ -48,4 +48,3 @@ def self_attend(
     attn = attend(Q, K, V, scale=scale)  # (m, d_v)
 
     return attn
-

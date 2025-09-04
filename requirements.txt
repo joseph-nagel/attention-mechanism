@@ -4,4 +4,3 @@ torchvision
 lightning
 matplotlib
 notebook
-
