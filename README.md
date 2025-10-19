@@ -15,17 +15,17 @@ Following this, a vision transformer (ViT) is implemented and briefly tested.
 
 ## Installation
 
-```
+```bash
 pip install -e .
 ```
 
 
 ## ViT training
 
-```
+```bash
 python scripts/main.py fit --config config/vit_mnist.yaml
 ```
 
-```
+```bash
 python scripts/main.py fit --config config/vit_fmnist.yaml
 ```
