@@ -17,9 +17,7 @@ layers : Attention layers.
 '''
 
 from . import functions, layers
-
 from .functions import attend, self_attend
-
 from .layers import (
     SelfAttention,
     MultiheadSelfAttention,

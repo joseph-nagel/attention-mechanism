@@ -23,7 +23,6 @@ from . import (
     encoding,
     vit
 )
-
 from .attention import (
     attend,
     self_attend,
@@ -31,16 +30,13 @@ from .attention import (
     MultiheadSelfAttention,
     SelfAttention2D
 )
-
 from .data import MNISTDataModule
-
 from .encoding import (
     make_frequencies,
     encode_position,
     make_encoding,
     SinusoidalEncoding
 )
-
 from .vit import (
     BaseViT,
     ClassifierViT,

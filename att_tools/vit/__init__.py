@@ -21,11 +21,7 @@ from . import (
     encoder,
     patches
 )
-
 from .base import BaseViT
-
 from .classifier import ClassifierHead, ClassifierViT
-
 from .encoder import EncoderBlock, Encoder
-
 from .patches import PatchEmbedding
