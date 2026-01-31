@@ -32,8 +32,7 @@ class SelfAttention(nn.Module):
         d_k: int | None = None,
         d_v: int | None = None,
         scale: bool = True
-    ) -> None:
-
+    ):
         super().__init__()
 
         if d_k is None:
@@ -106,8 +105,7 @@ class MultiheadSelfAttention(nn.Module):
         embed_dim: int,
         num_heads: int,
         scale: bool = True
-    ) -> None:
-
+    ):
         super().__init__()
 
         # consider dimensionality
@@ -182,8 +180,7 @@ class SelfAttention2D(nn.Module):
         num_channels: int,
         num_queries_and_keys: int | None = None,
         scale: bool = False
-    ) -> None:
-
+    ):
         super().__init__()
 
         if num_queries_and_keys is None:

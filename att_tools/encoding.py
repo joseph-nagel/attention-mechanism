@@ -106,8 +106,7 @@ class SinusoidalEncoding(nn.Module):
 
     '''
 
-    def __init__(self, embed_dim: int) -> None:
-
+    def __init__(self, embed_dim: int):
         super().__init__()
 
         # set embedding dimension

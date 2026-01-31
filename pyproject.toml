@@ -20,11 +20,7 @@ dependencies = [
     "numpy",
     "torch",
     "torchvision",
-    "lightning"
-]
-
-[project.optional-dependencies]
-interactive = [
+    "lightning",
     "matplotlib",
     "notebook"
 ]

@@ -35,8 +35,7 @@ class MNISTDataModule(LightningDataModule):
         std: float | None = None,
         batch_size: int = 32,
         num_workers: int = 0
-    ) -> None:
-
+    ):
         super().__init__()
 
         # set dataset
@@ -83,13 +82,11 @@ class MNISTDataModule(LightningDataModule):
 
     def prepare_data(self) -> None:
         '''Download data.'''
-
         train_set = self.data_class(
             self.data_dir,
             train=True,
             download=True
         )
-
         test_set = self.data_class(
             self.data_dir,
             train=False,
@@ -123,7 +120,6 @@ class MNISTDataModule(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         '''Create train dataloader.'''
-
         return DataLoader(
             self.train_set,
             batch_size=self.batch_size,
@@ -135,7 +131,6 @@ class MNISTDataModule(LightningDataModule):
 
     def val_dataloader(self) -> DataLoader:
         '''Create val. dataloader.'''
-
         return DataLoader(
             self.val_set,
             batch_size=self.batch_size,
@@ -147,7 +142,6 @@ class MNISTDataModule(LightningDataModule):
 
     def test_dataloader(self) -> DataLoader:
         '''Create test dataloader.'''
-
         return DataLoader(
             self.test_set,
             batch_size=self.batch_size,

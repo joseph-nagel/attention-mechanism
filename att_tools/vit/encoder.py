@@ -33,8 +33,7 @@ class EncoderBlock(nn.Module):
         mlp_dim: int | None = None,
         mlp_dropout: float = 0.0,
         use_custom_mha: bool = False
-    ) -> None:
-
+    ):
         super().__init__()
 
         self.use_custom_mha = use_custom_mha
@@ -135,8 +134,7 @@ class Encoder(nn.Module):
         mlp_dim: int | None = None,
         mlp_dropout: float = 0.0,
         use_custom_mha: bool = False
-    ) -> None:
-
+    ):
         super().__init__()
 
         # create encoder blocks

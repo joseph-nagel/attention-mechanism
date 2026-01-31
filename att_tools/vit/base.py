@@ -36,8 +36,7 @@ class BaseViT(LightningModule):
         lossfcn: nn.Module | Callable[[torch.Tensor], torch.Tensor],
         lr: float = 1e-04,
         warmup: int = 0
-    ) -> None:
-
+    ):
         super().__init__()
 
         # set models
@@ -111,12 +110,9 @@ class BaseViT(LightningModule):
         batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
         batch_idx: int
     ) -> torch.Tensor:
-
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
-
         self.log('train_loss', loss.item())  # Lightning logs batch-wise scalars during training per default
-
         return loss
 
     def validation_step(
@@ -124,12 +120,9 @@ class BaseViT(LightningModule):
         batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
         batch_idx: int
     ) -> torch.Tensor:
-
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
-
         self.log('val_loss', loss.item())  # Lightning automatically averages scalars over batches for validation
-
         return loss
 
     def test_step(
@@ -137,12 +130,9 @@ class BaseViT(LightningModule):
         batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
         batch_idx: int
     ) -> torch.Tensor:
-
         x_batch, y_batch = self._get_batch(batch)
         loss = self.loss(x_batch, y_batch)
-
         self.log('test_loss', loss.item())  # Lightning automatically averages scalars over batches for testing
-
         return loss
 
     def configure_optimizers(self) -> tuple[list, list]:

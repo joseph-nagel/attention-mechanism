@@ -41,8 +41,7 @@ class PatchEmbedding(nn.Module):
         use_cls_token: bool = False,
         use_pos_embedding: bool = False,
         num_patches: int | None = None
-    ) -> None:
-
+    ):
         super().__init__()
 
         self.in_channels = in_channels

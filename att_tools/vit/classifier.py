@@ -24,7 +24,7 @@ class ClassifierHead(nn.Module):
 
     '''
 
-    def __init__(self, embed_dim: int, num_classes: int) -> None:
+    def __init__(self, embed_dim: int, num_classes: int):
         super().__init__()
 
         self.ln = nn.LayerNorm(embed_dim)
@@ -84,7 +84,7 @@ class ClassifierViT(BaseViT):
         mlp_dropout: float = 0.0,
         lr: float = 1e-04,
         warmup: int = 100
-    ) -> None:
+    ):
 
         # create patch embedding
         patchemb = PatchEmbedding(
@@ -140,7 +140,6 @@ class ClassifierViT(BaseViT):
         batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
         batch_idx: int
     ) -> torch.Tensor:
-
         x_batch, y_batch = self._get_batch(batch)
 
         y_pred = self(x_batch, return_weights=False)
@@ -157,7 +156,6 @@ class ClassifierViT(BaseViT):
         batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
         batch_idx: int
     ) -> torch.Tensor:
-
         x_batch, y_batch = self._get_batch(batch)
 
         y_pred = self(x_batch, return_weights=False)
@@ -174,7 +172,6 @@ class ClassifierViT(BaseViT):
         batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
         batch_idx: int
     ) -> torch.Tensor:
-
         x_batch, y_batch = self._get_batch(batch)
 
         y_pred = self(x_batch, return_weights=False)
