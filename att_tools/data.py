@@ -57,7 +57,7 @@ class MNISTDataModule(LightningDataModule):
 
         # create transforms
         train_transforms = [
-            transforms.RandomRotation(5), # TODO: refine data augmentation
+            transforms.RandomRotation(5),  # TODO: refine data augmentation
             transforms.ToTensor()
         ]
 
@@ -74,10 +74,9 @@ class MNISTDataModule(LightningDataModule):
 
         # create inverse normalization
         if (mean is not None) and (std is not None):
-
             self.renormalize = transforms.Compose([
-                transforms.Lambda(lambda x: x * std + mean), # reverse normalization
-                transforms.Lambda(lambda x: x.clamp(0, 1)) # clip to valid range
+                transforms.Lambda(lambda x: x * std + mean),  # reverse normalization
+                transforms.Lambda(lambda x: x.clamp(0, 1))  # clip to valid range
             ])
 
     def prepare_data(self) -> None:

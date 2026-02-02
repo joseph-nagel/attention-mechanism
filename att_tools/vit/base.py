@@ -85,18 +85,14 @@ class BaseViT(LightningModule):
         batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor]
     ) -> tuple[torch.Tensor, torch.Tensor]:
         '''Get batch features and labels.'''
-
         if isinstance(batch, Sequence):
             x_batch = batch[0]
             y_batch = batch[1]
-
         elif isinstance(batch, dict):
             x_batch = batch['features']
             y_batch = batch['labels']
-
         else:
             raise TypeError(f'Invalid batch type: {type(batch)}')
-
         return x_batch, y_batch
 
     def loss(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
