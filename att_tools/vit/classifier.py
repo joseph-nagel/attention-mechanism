@@ -1,4 +1,4 @@
-'''ViT classifier.'''
+"""ViT classifier."""
 
 from collections.abc import Sequence
 
@@ -12,7 +12,7 @@ from .patches import PatchEmbedding
 
 
 class ClassifierHead(nn.Module):
-    '''
+    """
     ViT classification head.
 
     Parameters
@@ -22,7 +22,7 @@ class ClassifierHead(nn.Module):
     num_classes : int
         Number of target classes.
 
-    '''
+    """
 
     def __init__(self, embed_dim: int, num_classes: int):
         super().__init__()
@@ -43,7 +43,7 @@ class ClassifierHead(nn.Module):
 
 
 class ClassifierViT(BaseViT):
-    '''
+    """
     ViT classifier module.
 
     Parameters
@@ -69,7 +69,7 @@ class ClassifierViT(BaseViT):
     lr : float
         Initial optimizer learning rate.
 
-    '''
+    """
 
     def __init__(
         self,
@@ -83,7 +83,7 @@ class ClassifierViT(BaseViT):
         mlp_dim: int | None = None,
         mlp_dropout: float = 0.0,
         lr: float = 1e-04,
-        warmup: int = 100
+        warmup: int = 100,
     ):
 
         # create patch embedding
@@ -93,7 +93,7 @@ class ClassifierViT(BaseViT):
             patch_size=patch_size,
             use_cls_token=True,  # use class token attending to patch tokens for classification
             use_pos_embedding=True,
-            num_patches=num_patches
+            num_patches=num_patches,
         )
 
         # create encoder
@@ -103,17 +103,14 @@ class ClassifierViT(BaseViT):
             num_blocks=num_blocks,
             mlp_dim=mlp_dim,
             mlp_dropout=mlp_dropout,
-            use_custom_mha=False
+            use_custom_mha=False,
         )
 
         # create classifier head
-        classifier = ClassifierHead(
-            embed_dim=embed_dim,
-            num_classes=num_classes
-        )
+        classifier = ClassifierHead(embed_dim=embed_dim, num_classes=num_classes)
 
         # create loss function
-        lossfcn = nn.CrossEntropyLoss(reduction='mean')
+        lossfcn = nn.CrossEntropyLoss(reduction="mean")
 
         # initialize embedding class
         super().__init__(
@@ -122,23 +119,23 @@ class ClassifierViT(BaseViT):
             head=classifier,
             lossfcn=lossfcn,
             lr=lr,
-            warmup=warmup
+            warmup=warmup,
         )
 
         # store hyperparams
         self.save_hyperparameters(logger=True)
 
         # create accuracy metrics
-        self.train_acc = Accuracy(task='multiclass', num_classes=num_classes)
-        self.val_acc = Accuracy(task='multiclass', num_classes=num_classes)
-        self.test_acc = Accuracy(task='multiclass', num_classes=num_classes)
+        self.train_acc = Accuracy(task="multiclass", num_classes=num_classes)
+        self.val_acc = Accuracy(task="multiclass", num_classes=num_classes)
+        self.test_acc = Accuracy(task="multiclass", num_classes=num_classes)
 
-        self.test_confmat = ConfusionMatrix(task='multiclass', num_classes=num_classes)
+        self.test_confmat = ConfusionMatrix(task="multiclass", num_classes=num_classes)
 
     def training_step(
         self,
         batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
-        batch_idx: int
+        batch_idx: int,
     ) -> torch.Tensor:
         x_batch, y_batch = self._get_batch(batch)
 
@@ -146,15 +143,15 @@ class ClassifierViT(BaseViT):
         loss = self.lossfcn(y_pred, y_batch)
         _ = self.train_acc(y_pred, y_batch)
 
-        self.log('train_loss', loss.item())  # Lightning logs batch-wise scalars during training per default
-        self.log('train_acc', self.train_acc)  # the same applies to torchmetrics.Metric objects
+        self.log("train_loss", loss.item())  # Lightning logs batch-wise scalars during training per default
+        self.log("train_acc", self.train_acc)  # the same applies to torchmetrics.Metric objects
 
         return loss
 
     def validation_step(
         self,
         batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
-        batch_idx: int
+        batch_idx: int,
     ) -> torch.Tensor:
         x_batch, y_batch = self._get_batch(batch)
 
@@ -162,15 +159,15 @@ class ClassifierViT(BaseViT):
         loss = self.lossfcn(y_pred, y_batch)
         _ = self.val_acc(y_pred, y_batch)
 
-        self.log('val_loss', loss.item())  # Lightning automatically averages scalars over batches for validation
-        self.log('val_acc', self.val_acc)  # the batch size is considered when logging torchmetrics.Metric objects
+        self.log("val_loss", loss.item())  # Lightning automatically averages scalars over batches for validation
+        self.log("val_acc", self.val_acc)  # the batch size is considered when logging torchmetrics.Metric objects
 
         return loss
 
     def test_step(
         self,
         batch: Sequence[torch.Tensor, torch.Tensor] | dict[str, torch.Tensor],
-        batch_idx: int
+        batch_idx: int,
     ) -> torch.Tensor:
         x_batch, y_batch = self._get_batch(batch)
 
@@ -180,8 +177,8 @@ class ClassifierViT(BaseViT):
 
         _ = self.test_confmat.update(y_pred, y_batch)
 
-        self.log('test_loss', loss.item())  # Lightning automatically averages scalars over batches for testing
-        self.log('test_acc', self.test_acc)  # the batch size is considered when logging torchmetrics.Metric objects
+        self.log("test_loss", loss.item())  # Lightning automatically averages scalars over batches for testing
+        self.log("test_acc", self.test_acc)  # the batch size is considered when logging torchmetrics.Metric objects
 
         return loss
 

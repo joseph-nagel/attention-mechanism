@@ -1,4 +1,4 @@
-'''
+"""
 Vision transformer.
 
 Summary
@@ -13,14 +13,9 @@ classifier: ViT classifier.
 encoder : ViT encoder.
 patches : Patch embedding.
 
-'''
+"""
 
-from . import (
-    base,
-    classifier,
-    encoder,
-    patches
-)
+from . import base, classifier, encoder, patches
 from .base import BaseViT
 from .classifier import ClassifierHead, ClassifierViT
 from .encoder import EncoderBlock, Encoder

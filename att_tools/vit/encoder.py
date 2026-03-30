@@ -1,4 +1,4 @@
-'''ViT encoder.'''
+"""ViT encoder."""
 
 import torch
 import torch.nn as nn
@@ -7,7 +7,7 @@ from ..attention import MultiheadSelfAttention
 
 
 class EncoderBlock(nn.Module):
-    '''
+    """
     ViT encoder block.
 
     Parameters
@@ -24,7 +24,7 @@ class EncoderBlock(nn.Module):
         Determines whether a custom or a native Pytorch
         implementation of multihead attention is used.
 
-    '''
+    """
 
     def __init__(
         self,
@@ -32,7 +32,7 @@ class EncoderBlock(nn.Module):
         num_heads: int,
         mlp_dim: int | None = None,
         mlp_dropout: float = 0.0,
-        use_custom_mha: bool = False
+        use_custom_mha: bool = False,
     ):
         super().__init__()
 
@@ -46,18 +46,10 @@ class EncoderBlock(nn.Module):
 
         if use_custom_mha:
             # use custom implementation
-            self.att = MultiheadSelfAttention(
-                embed_dim=embed_dim,
-                num_heads=num_heads,
-                scale=True
-            )
+            self.att = MultiheadSelfAttention(embed_dim=embed_dim, num_heads=num_heads, scale=True)
         else:
             # use PyTorch implementation
-            self.att = nn.MultiheadAttention(
-                embed_dim=embed_dim,
-                num_heads=num_heads,
-                batch_first=True
-            )
+            self.att = nn.MultiheadAttention(embed_dim=embed_dim, num_heads=num_heads, batch_first=True)
 
         # create MLP block
         self.ln2 = nn.LayerNorm(embed_dim)
@@ -67,13 +59,11 @@ class EncoderBlock(nn.Module):
             nn.GELU(),
             nn.Dropout(mlp_dropout),
             nn.Linear(mlp_dim, embed_dim),
-            nn.Dropout(mlp_dropout)
+            nn.Dropout(mlp_dropout),
         )
 
     def forward(
-        self,
-        x: torch.Tensor,
-        return_weights: bool = False
+        self, x: torch.Tensor, return_weights: bool = False
     ) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
 
         # run attention block
@@ -81,7 +71,7 @@ class EncoderBlock(nn.Module):
 
         if self.use_custom_mha:
             if return_weights:
-                raise NotImplementedError('Returning the weights from custom attention is not implemented')
+                raise NotImplementedError("Returning the weights from custom attention is not implemented")
 
             vals = self.att(y)
 
@@ -105,7 +95,7 @@ class EncoderBlock(nn.Module):
 
 
 class Encoder(nn.Module):
-    '''
+    """
     ViT encoder.
 
     Parameters
@@ -124,7 +114,7 @@ class Encoder(nn.Module):
         Determines whether a custom or a native Pytorch
         implementation of multihead attention is used.
 
-    '''
+    """
 
     def __init__(
         self,
@@ -133,7 +123,7 @@ class Encoder(nn.Module):
         num_blocks: int,
         mlp_dim: int | None = None,
         mlp_dropout: float = 0.0,
-        use_custom_mha: bool = False
+        use_custom_mha: bool = False,
     ):
         super().__init__()
 
@@ -144,17 +134,15 @@ class Encoder(nn.Module):
                 num_heads=num_heads,
                 mlp_dim=mlp_dim,
                 mlp_dropout=mlp_dropout,
-                use_custom_mha=use_custom_mha
-
-            ) for _ in range(num_blocks)
+                use_custom_mha=use_custom_mha,
+            )
+            for _ in range(num_blocks)
         ]
 
         self.blocks = nn.ModuleList(blocks)
 
     def forward(
-        self,
-        x: torch.Tensor,
-        return_weights: bool = False
+        self, x: torch.Tensor, return_weights: bool = False
     ) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
 
         if return_weights:

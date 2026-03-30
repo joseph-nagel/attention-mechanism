@@ -1,4 +1,4 @@
-'''
+"""
 Attention tools.
 
 Summary
@@ -15,27 +15,22 @@ data : Datamodules.
 encoding : Positional encoding.
 vit : Vision transformer.
 
-'''
+"""
 
-from . import (
-    attention,
-    data,
-    encoding,
-    vit
-)
+from . import attention, data, encoding, vit
 from .attention import (
     attend,
     self_attend,
     SelfAttention,
     MultiheadSelfAttention,
-    SelfAttention2D
+    SelfAttention2D,
 )
 from .data import MNISTDataModule
 from .encoding import (
     make_frequencies,
     encode_position,
     make_encoding,
-    SinusoidalEncoding
+    SinusoidalEncoding,
 )
 from .vit import (
     BaseViT,
@@ -43,5 +38,5 @@ from .vit import (
     ClassifierHead,
     Encoder,
     EncoderBlock,
-    PatchEmbedding
+    PatchEmbedding,
 )

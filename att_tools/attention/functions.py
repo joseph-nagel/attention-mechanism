@@ -1,4 +1,4 @@
-'''Attention functions.'''
+"""Attention functions."""
 
 import math
 
@@ -10,9 +10,9 @@ def attend(
     Q: torch.Tensor,  # (m, d_k)
     K: torch.Tensor,  # (n, d_k)
     V: torch.Tensor,  # (n, d_v)
-    scale: bool = True
+    scale: bool = True,
 ) -> torch.Tensor:
-    '''Compute (scaled) dot-product attention.'''
+    """Compute (scaled) dot-product attention."""
 
     # compute alignment scores
     algn_scores = torch.matmul(Q, K.transpose(-2, -1))  # (m, n)
@@ -35,9 +35,9 @@ def self_attend(
     W_q: torch.Tensor,  # (d_x, d_k)
     W_k: torch.Tensor,  # (d_x, d_k)
     W_v: torch.Tensor,  # (d_x, d_v)
-    scale: bool = True
+    scale: bool = True,
 ) -> torch.Tensor:
-    '''Compute (scaled) dot-product self-attention.'''
+    """Compute (scaled) dot-product self-attention."""
 
     # compute queries, keys and values
     Q = torch.matmul(X, W_q)  # (m, d_k)

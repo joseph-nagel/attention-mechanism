@@ -1,4 +1,4 @@
-'''Datamodules.'''
+"""Datamodules."""
 
 import torch
 from torch.utils.data import random_split, DataLoader
@@ -7,7 +7,7 @@ from lightning import LightningDataModule
 
 
 class MNISTDataModule(LightningDataModule):
-    '''
+    """
     DataModule for MNIST-like datasets.
 
     Parameters
@@ -25,28 +25,28 @@ class MNISTDataModule(LightningDataModule):
     num_workers : int
         Number of workers for the loader.
 
-    '''
+    """
 
     def __init__(
         self,
-        data_set: str = 'mnist',
-        data_dir: str = '.',
+        data_set: str = "mnist",
+        data_dir: str = ".",
         mean: float | None = None,
         std: float | None = None,
         batch_size: int = 32,
-        num_workers: int = 0
+        num_workers: int = 0,
     ):
         super().__init__()
 
         # set dataset
-        if data_set == 'mnist':
+        if data_set == "mnist":
             self.data_class = datasets.MNIST
-        elif data_set in ('fashion_mnist', 'fmnist'):
+        elif data_set in ("fashion_mnist", "fmnist"):
             self.data_class = datasets.FashionMNIST
-        elif data_set in ('kuzushiji_mnist', 'kmnist'):
+        elif data_set in ("kuzushiji_mnist", "kmnist"):
             self.data_class = datasets.KMNIST
         else:
-            raise ValueError(f'Invalid dataset: {data_set}')
+            raise ValueError(f"Invalid dataset: {data_set}")
 
         # set data location
         self.data_dir = data_dir
@@ -58,7 +58,7 @@ class MNISTDataModule(LightningDataModule):
         # create transforms
         train_transforms = [
             transforms.RandomRotation(5),  # TODO: refine data augmentation
-            transforms.ToTensor()
+            transforms.ToTensor(),
         ]
 
         test_transforms = [transforms.ToTensor()]
@@ -74,78 +74,72 @@ class MNISTDataModule(LightningDataModule):
 
         # create inverse normalization
         if (mean is not None) and (std is not None):
-            self.renormalize = transforms.Compose([
-                transforms.Lambda(lambda x: x * std + mean),  # reverse normalization
-                transforms.Lambda(lambda x: x.clamp(0, 1))  # clip to valid range
-            ])
+            self.renormalize = transforms.Compose(
+                [
+                    transforms.Lambda(lambda x: x * std + mean),  # reverse normalization
+                    transforms.Lambda(lambda x: x.clamp(0, 1)),  # clip to valid range
+                ]
+            )
 
     def prepare_data(self) -> None:
-        '''Download data.'''
-        train_set = self.data_class(
-            self.data_dir,
-            train=True,
-            download=True
-        )
-        test_set = self.data_class(
-            self.data_dir,
-            train=False,
-            download=True
-        )
+        """Download data."""
+        _ = self.data_class(self.data_dir, train=True, download=True)
+        _ = self.data_class(self.data_dir, train=False, download=True)
 
     def setup(self, stage) -> None:
-        '''Set up train/test/val. datasets.'''
+        """Set up train/test/val. datasets."""
 
         # create train/val. datasets
-        if stage in ('fit', 'validate'):
+        if stage in ("fit", "validate"):
             train_set = self.data_class(
                 self.data_dir,
                 train=True,
-                transform=self.train_transform
+                transform=self.train_transform,
             )
 
             self.train_set, self.val_set = random_split(
                 train_set,
                 [50000, 10000],
-                generator=torch.Generator().manual_seed(42)
+                generator=torch.Generator().manual_seed(42),
             )
 
         # create test dataset
-        elif stage == 'test':
+        elif stage == "test":
             self.test_set = self.data_class(
                 self.data_dir,
                 train=False,
-                transform=self.test_transform
+                transform=self.test_transform,
             )
 
     def train_dataloader(self) -> DataLoader:
-        '''Create train dataloader.'''
+        """Create train dataloader."""
         return DataLoader(
             self.train_set,
             batch_size=self.batch_size,
             drop_last=True,
             shuffle=True,
             num_workers=self.num_workers,
-            pin_memory=self.num_workers > 0
+            pin_memory=self.num_workers > 0,
         )
 
     def val_dataloader(self) -> DataLoader:
-        '''Create val. dataloader.'''
+        """Create val. dataloader."""
         return DataLoader(
             self.val_set,
             batch_size=self.batch_size,
             drop_last=False,
             shuffle=False,
             num_workers=self.num_workers,
-            pin_memory=self.num_workers > 0
+            pin_memory=self.num_workers > 0,
         )
 
     def test_dataloader(self) -> DataLoader:
-        '''Create test dataloader.'''
+        """Create test dataloader."""
         return DataLoader(
             self.test_set,
             batch_size=self.batch_size,
             drop_last=False,
             shuffle=False,
             num_workers=self.num_workers,
-            pin_memory=self.num_workers > 0
+            pin_memory=self.num_workers > 0,
         )

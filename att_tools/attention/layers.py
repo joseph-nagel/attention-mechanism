@@ -1,11 +1,11 @@
-'''Attention layers.'''
+"""Attention layers."""
 
 import torch
 import torch.nn as nn
 
 
 class SelfAttention(nn.Module):
-    '''
+    """
     Dot-product self-attention for sequential data.
 
     Summary
@@ -24,14 +24,14 @@ class SelfAttention(nn.Module):
     scale : bool
         Determines whether scores are scaled.
 
-    '''
+    """
 
     def __init__(
         self,
         d_x: int,
         d_k: int | None = None,
         d_v: int | None = None,
-        scale: bool = True
+        scale: bool = True,
     ):
         super().__init__()
 
@@ -51,14 +51,14 @@ class SelfAttention(nn.Module):
         self,
         x: torch.Tensor,
         attn_mask: torch.Tensor | None = None,
-        is_causal: bool = False
+        is_causal: bool = False,
     ) -> torch.Tensor:
 
         # ensure (batch, sequence, features)-shaped input
         if x.ndim == 2:
             x = x.unsqueeze(0)
         elif x.ndim != 3:
-            raise ValueError(f'Invalid number of tensor dimensions: {x.ndim}')
+            raise ValueError(f"Invalid number of tensor dimensions: {x.ndim}")
 
         # compute queries, keys and values
         q = self.q(x)  # (batch, sequence, d_k)
@@ -72,14 +72,14 @@ class SelfAttention(nn.Module):
             value=v,
             attn_mask=attn_mask,
             is_causal=is_causal,
-            scale=None if self.scale else 1.0
+            scale=None if self.scale else 1.0,
         )  # (batch, sequence, d_v)
 
         return attn
 
 
 class MultiheadSelfAttention(nn.Module):
-    '''
+    """
     Multihead self-attention.
 
     Summary
@@ -98,13 +98,13 @@ class MultiheadSelfAttention(nn.Module):
     scale : bool
         Determines whether scores are scaled.
 
-    '''
+    """
 
     def __init__(
         self,
         embed_dim: int,
         num_heads: int,
-        scale: bool = True
+        scale: bool = True,
     ):
         super().__init__()
 
@@ -112,7 +112,7 @@ class MultiheadSelfAttention(nn.Module):
         if embed_dim % num_heads == 0:
             head_dim = embed_dim // num_heads
         else:
-            raise ValueError('Embedding dim. must be divisible by head number')
+            raise ValueError("Embedding dim. must be divisible by head number")
 
         # create attention heads
         heads = [
@@ -120,8 +120,9 @@ class MultiheadSelfAttention(nn.Module):
                 d_x=embed_dim,  # input dim. d_x
                 d_k=head_dim,  # intermediate dims. with d_q = d_k
                 d_v=head_dim,  # output dim. d_v
-                scale=scale
-            ) for _ in range(num_heads)
+                scale=scale,
+            )
+            for _ in range(num_heads)
         ]
 
         self.heads = nn.ModuleList(heads)
@@ -133,19 +134,19 @@ class MultiheadSelfAttention(nn.Module):
         self,
         x: torch.Tensor,
         attn_mask: torch.Tensor | None = None,
-        is_causal: bool = False
+        is_causal: bool = False,
     ) -> torch.Tensor:
 
         # ensure (batch, sequence, features)-shaped input
         if x.ndim == 2:
             x = x.unsqueeze(0)
         elif x.ndim != 3:
-            raise ValueError(f'Invalid number of tensor dimensions: {x.ndim}')
+            raise ValueError(f"Invalid number of tensor dimensions: {x.ndim}")
 
         # run attention heads
         x = torch.cat(
             [h(x, attn_mask=attn_mask, is_causal=is_causal) for h in self.heads],
-            dim=-1
+            dim=-1,
         )  # (batch, sequence, features)
 
         # run linear layer
@@ -155,7 +156,7 @@ class MultiheadSelfAttention(nn.Module):
 
 
 class SelfAttention2D(nn.Module):
-    '''
+    """
     Self-attention with skip connections for 2D data.
 
     Summary
@@ -173,13 +174,13 @@ class SelfAttention2D(nn.Module):
     scale : bool
         Determines whether scores are scaled.
 
-    '''
+    """
 
     def __init__(
         self,
         num_channels: int,
         num_queries_and_keys: int | None = None,
-        scale: bool = False
+        scale: bool = False,
     ):
         super().__init__()
 
@@ -191,7 +192,7 @@ class SelfAttention2D(nn.Module):
             num_channels,
             num_queries_and_keys,
             kernel_size=1,
-            bias=False
+            bias=False,
         )
 
         # create layer predicting keys
@@ -199,7 +200,7 @@ class SelfAttention2D(nn.Module):
             num_channels,
             num_queries_and_keys,
             kernel_size=1,
-            bias=False
+            bias=False,
         )
 
         # create layer predicting values
@@ -207,7 +208,7 @@ class SelfAttention2D(nn.Module):
             num_channels,
             num_channels,
             kernel_size=1,
-            bias=False
+            bias=False,
         )
 
         # initialize attention strength param
@@ -216,7 +217,7 @@ class SelfAttention2D(nn.Module):
         # initialize scaling factor
         if scale:
             d_k_sqrt = torch.tensor(num_queries_and_keys).sqrt()
-            self.register_buffer('scale', d_k_sqrt)
+            self.register_buffer("scale", d_k_sqrt)
         else:
             self.scale = None
 
@@ -226,7 +227,7 @@ class SelfAttention2D(nn.Module):
         b, c, h, w = x.shape
 
         # flatten tensor (last axis contains the sequence)
-        x_flattened = x.view(b, c, h*w)  # (b, c, h*w)
+        x_flattened = x.view(b, c, h * w)  # (b, c, h*w)
 
         # compute query, key and value
         q = self.q(x_flattened)  # (b, c', h*w)

@@ -1,11 +1,11 @@
-'''Patch embedding.'''
+"""Patch embedding."""
 
 import torch
 import torch.nn as nn
 
 
 class PatchEmbedding(nn.Module):
-    '''
+    """
     Patch embedding module.
 
     Summary
@@ -31,7 +31,7 @@ class PatchEmbedding(nn.Module):
     num_patches : int or None
         Prefixed number of patches, required for pos. embedding.
 
-    '''
+    """
 
     def __init__(
         self,
@@ -40,7 +40,7 @@ class PatchEmbedding(nn.Module):
         patch_size: int,
         use_cls_token: bool = False,
         use_pos_embedding: bool = False,
-        num_patches: int | None = None
+        num_patches: int | None = None,
     ):
         super().__init__()
 
@@ -55,14 +55,14 @@ class PatchEmbedding(nn.Module):
             kernel_size=patch_size,
             stride=patch_size,
             padding=0,
-            bias=True
+            bias=True,
         )
 
         # create learnable class token embedding
         if use_cls_token:
             self.cls_token = nn.Parameter(
                 torch.randn(1, 1, embed_dim),  # (1, 1, c)
-                requires_grad=True
+                requires_grad=True,
             )
         else:
             self.cls_token = None
@@ -72,10 +72,10 @@ class PatchEmbedding(nn.Module):
             if num_patches is not None:
                 self.pos_embedding = nn.Parameter(
                     torch.randn(1, num_patches + 1 if use_cls_token else num_patches, embed_dim),  # (b, p(+1), c)
-                    requires_grad=True
+                    requires_grad=True,
                 )
             else:
-                raise TypeError('Number of patches is missing')
+                raise TypeError("Number of patches is missing")
         else:
             self.pos_embedding = None
 
