@@ -2,5 +2,6 @@ numpy
 torch
 torchvision
 lightning
+omegaconf
 matplotlib
 notebook

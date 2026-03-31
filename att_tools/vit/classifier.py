@@ -123,7 +123,7 @@ class ClassifierViT(BaseViT):
         )
 
         # store hyperparams
-        self.save_hyperparameters(logger=True)
+        self.save_hyperparameters()
 
         # create accuracy metrics
         self.train_acc = Accuracy(task="multiclass", num_classes=num_classes)
