@@ -89,7 +89,7 @@ class SinusoidalEncoding(nn.Module):
 
     Summary
     -------
-    This class implements a sinusoisdal position encoding.
+    This class implements a sinusoidal position encoding.
     Arbitrary positions or times are embedded on the fly.
 
     Parameters
